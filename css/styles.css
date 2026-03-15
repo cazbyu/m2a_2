@@ -419,7 +419,7 @@ body {
 .custom-amount input::placeholder { color: rgba(255,255,255,0.5); }
 .donate-note { font-size: 0.8rem; color: #999; margin-top: 16px; }
 
-/* ===== Entrepreneur Section ===== */
+/* ===== Entrepreneur Bracket Section ===== */
 .entrepreneurs-section {
   padding: 60px 24px;
   max-width: 1100px;
@@ -428,72 +428,239 @@ body {
 }
 .entrepreneurs-section h2 { font-family: var(--font-display); font-size: 2.2rem; margin-bottom: 8px; }
 .section-desc { color: var(--color-text-light); margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto; }
-.entrepreneur-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  text-align: left;
+
+/* Week Schedule Bar */
+.ent-schedule {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 32px;
 }
-.entrepreneur-card {
+.ent-week {
+  padding: 12px 20px;
   background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  transition: transform 0.2s;
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  text-align: center;
+  min-width: 120px;
+  transition: all 0.2s;
 }
-.entrepreneur-card:hover { transform: translateY(-2px); }
-.entrepreneur-img {
-  height: 160px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+.ent-week.active {
+  border-color: var(--color-primary);
+  background: var(--color-selected-bg);
+  box-shadow: 0 2px 8px rgba(212,162,78,0.3);
+}
+.ent-week.completed {
+  border-color: var(--color-secondary);
+  background: #e8f5e1;
+}
+.ent-week-label { font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--color-text-light); }
+.ent-week-name { font-family: var(--font-display); font-size: 1.1rem; }
+.ent-week-dates { font-size: 0.75rem; color: var(--color-text-light); margin-top: 2px; }
+
+/* Bracket Layout */
+.ent-bracket-container {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+  overflow-x: auto;
+  padding: 16px 0;
+}
+.ent-round {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: 0 8px;
+}
+.ent-round-locked { opacity: 0.5; }
+.ent-round-label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.ent-matchups {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex: 1;
+}
+.ent-matchup {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 8px;
+  margin: 8px 0;
+  position: relative;
+}
+.ent-vs {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: var(--color-text-light);
+  padding: 2px 0;
+}
+
+/* Play-in tag */
+.ent-playin { border: 2px dashed var(--color-primary); }
+.ent-playin-tag {
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-primary-dark);
+  margin-bottom: 2px;
+}
+
+/* Entrepreneur Slot */
+.ent-slot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  text-align: left;
+  cursor: default;
+}
+.ent-slot-active {
+  cursor: pointer;
+  border-color: var(--color-border);
+}
+.ent-slot-active:hover {
+  border-color: var(--color-primary);
+  background: var(--color-hover-bg);
+}
+.ent-slot-empty {
+  opacity: 0.4;
+}
+
+/* Photo (right side of slot) */
+.ent-slot-photo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--color-primary);
+}
+.ent-slot-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ent-slot-photo-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ddd;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 2rem;
+  color: #999;
+  font-size: 1.2rem;
+  flex-shrink: 0;
 }
-.entrepreneur-body { padding: 20px; }
-.entrepreneur-body h3 { font-size: 1.1rem; margin-bottom: 4px; }
-.entrepreneur-location { color: var(--color-text-light); font-size: 0.85rem; margin-bottom: 8px; }
-.entrepreneur-desc { font-size: 0.9rem; color: var(--color-text-light); margin-bottom: 16px; line-height: 1.6; }
-.funding-bar {
+
+.ent-slot-info { flex: 1; min-width: 0; }
+.ent-slot-name { font-weight: 600; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ent-slot-biz { font-size: 0.7rem; color: var(--color-text-light); margin-bottom: 3px; }
+.ent-funding-bar {
+  height: 6px;
   background: #e8e8e8;
-  border-radius: 8px;
-  height: 10px;
+  border-radius: 3px;
   overflow: hidden;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
-.funding-fill {
+.ent-funding-fill {
   height: 100%;
   background: var(--color-secondary);
-  border-radius: 8px;
-  transition: width 0.5s;
+  border-radius: 3px;
+  transition: width 0.4s;
 }
-.funding-text { font-size: 0.8rem; color: var(--color-text-light); margin-bottom: 12px; }
-.entrepreneur-actions { display: flex; gap: 8px; }
-.entrepreneur-actions .btn {
-  flex: 1;
-  text-align: center;
-  padding: 8px 12px;
-  font-size: 0.85rem;
+.ent-slot-raised { font-size: 0.7rem; color: var(--color-secondary); font-weight: 600; }
+.ent-plan-link {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: var(--color-primary-dark);
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 2px;
 }
-.btn-vote {
-  background: var(--color-secondary);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.btn-vote:hover { opacity: 0.9; }
-.btn-fund {
+.ent-plan-link:hover { text-decoration: underline; }
+
+/* Fund Button */
+.btn-fund-ent {
+  padding: 6px 12px;
   background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.75rem;
   cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
 }
-.btn-fund:hover { background: var(--color-primary-dark); }
-.vote-count { font-size: 0.8rem; color: var(--color-text-light); margin-top: 8px; }
+.btn-fund-ent:hover { background: var(--color-primary-dark); }
+
+/* Champion Column */
+.ent-champion-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  padding: 0 8px;
+}
+.ent-champion-box {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  color: #fff;
+  min-width: 100px;
+}
+.ent-champion-icon { font-size: 2rem; margin-bottom: 4px; }
+.ent-champion-name { font-family: var(--font-display); font-size: 1.2rem; }
+
+/* Prize Info */
+.ent-prize-info {
+  margin-top: 40px;
+}
+.ent-prize-info h3 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 16px; }
+.prize-cards {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.prize-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  max-width: 300px;
+  text-align: center;
+}
+.prize-icon { font-size: 2.5rem; margin-bottom: 8px; }
+.prize-card h4 { font-size: 1rem; margin-bottom: 8px; }
+.prize-card p { font-size: 0.9rem; color: var(--color-text-light); line-height: 1.5; }
+
+/* Responsive Entrepreneur Bracket */
+@media (max-width: 768px) {
+  .ent-bracket-container { flex-direction: column; align-items: center; }
+  .ent-round { min-width: 100%; max-width: 350px; margin-bottom: 16px; }
+  .ent-champion-col { margin-top: 8px; }
+  .ent-schedule { flex-direction: row; gap: 4px; }
+  .ent-week { padding: 8px 12px; min-width: 90px; }
+  .ent-week-name { font-size: 0.9rem; }
+}
 
 /* ===== Footer ===== */
 .footer {
