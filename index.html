@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>March -2- Africa Bracket Challenge | Sandy Rotary Club</title>
+  <meta name="description" content="Sandy Rotary Club's 1st Annual March -2- Africa Bracket Challenge. Fill out your NCAA bracket, donate, and support African entrepreneurs!">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">Sandy Rotary Club</div>
+    <div class="nav-links">
+      <a href="#bracket">Bracket</a>
+      <a href="#entrepreneurs">Entrepreneurs</a>
+      <a href="#donate" class="nav-donate">Donate</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="hero-flyer">
+        <img src="assets/flyer-black.png" alt="March -2- Africa Bracket Challenge 2026 Flyer">
+      </div>
+      <div class="hero-text">
+        <h1>March <span class="accent">-2-</span> Africa</h1>
+        <p class="hero-subtitle">1st Annual Bracket Challenge</p>
+        <p class="hero-desc">Fill out your NCAA bracket, support African entrepreneurs, and help the Sandy Rotary Club make a difference. Every bracket counts!</p>
+        <div class="hero-actions">
+          <a href="#bracket" class="btn btn-primary">Fill Out Your Bracket</a>
+          <a href="#donate" class="btn btn-secondary">Donate $15</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="how">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Pick Your Teams</h3>
+        <p>Click on teams to advance them through each round of the NCAA tournament bracket.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Submit Your Bracket</h3>
+        <p>Enter your name and email, then save your picks. Track how you stack up!</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Donate &amp; Support</h3>
+        <p>Contribute $15 (or any amount) to support African entrepreneurs through the Sandy Rotary Club.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bracket Section -->
+  <section class="bracket-section" id="bracket">
+    <div class="bracket-header">
+      <h2>Your Bracket</h2>
+      <div class="bracket-progress">
+        <span id="pick-count">0</span> / <span id="pick-total">63</span> picks made
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- Region Tabs (mobile) -->
+    <div class="region-tabs" id="region-tabs">
+      <button class="region-tab active" data-region="east">East</button>
+      <button class="region-tab" data-region="midwest">Midwest</button>
+      <button class="region-tab" data-region="south">South</button>
+      <button class="region-tab" data-region="west">West</button>
+      <button class="region-tab" data-region="finalfour">Final Four</button>
+    </div>
+
+    <!-- Bracket Container -->
+    <div class="bracket-container" id="bracket-container">
+      <div class="bracket-side bracket-left">
+        <div class="region" id="region-east" data-region="east">
+          <h3 class="region-title">East <span class="region-location">Washington DC</span></h3>
+          <div class="rounds"></div>
+        </div>
+        <div class="region" id="region-midwest" data-region="midwest">
+          <h3 class="region-title">Midwest <span class="region-location">Chicago</span></h3>
+          <div class="rounds"></div>
+        </div>
+      </div>
+
+      <div class="final-four-container" id="region-finalfour" data-region="finalfour">
+        <h3 class="region-title">Final Four</h3>
+        <div class="final-four-bracket">
+          <div class="ff-semi" id="ff-semi1">
+            <div class="matchup" data-game="ff-semi1">
+              <div class="team-slot" data-slot="ff-semi1-top"><span class="seed"></span><span class="name">East Champion</span></div>
+              <div class="team-slot" data-slot="ff-semi1-bot"><span class="seed"></span><span class="name">Midwest Champion</span></div>
+            </div>
+          </div>
+          <div class="ff-championship">
+            <div class="matchup championship-matchup" data-game="ff-champ">
+              <div class="team-slot" data-slot="ff-champ-top"><span class="seed"></span><span class="name">Semifinal 1 Winner</span></div>
+              <div class="team-slot" data-slot="ff-champ-bot"><span class="seed"></span><span class="name">Semifinal 2 Winner</span></div>
+            </div>
+            <div class="champion-display" id="champion-display">
+              <div class="champion-label">Champion</div>
+              <div class="champion-name" id="champion-name">?</div>
+            </div>
+          </div>
+          <div class="ff-semi" id="ff-semi2">
+            <div class="matchup" data-game="ff-semi2">
+              <div class="team-slot" data-slot="ff-semi2-top"><span class="seed"></span><span class="name">South Champion</span></div>
+              <div class="team-slot" data-slot="ff-semi2-bot"><span class="seed"></span><span class="name">West Champion</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bracket-side bracket-right">
+        <div class="region" id="region-south" data-region="south">
+          <h3 class="region-title">South <span class="region-location">Houston</span></h3>
+          <div class="rounds"></div>
+        </div>
+        <div class="region" id="region-west" data-region="west">
+          <h3 class="region-title">West <span class="region-location">San Jose</span></h3>
+          <div class="rounds"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Submit Section -->
+  <section class="submit-section" id="submit">
+    <h2>Save Your Bracket</h2>
+    <p>Enter your info to lock in your picks. We'll track your score as the tournament progresses!</p>
+    <form id="bracket-form" class="bracket-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first-name">First Name</label>
+          <input type="text" id="first-name" name="firstName" required placeholder="First name">
+        </div>
+        <div class="form-group">
+          <label for="last-name">Last Name</label>
+          <input type="text" id="last-name" name="lastName" required placeholder="Last name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="your@email.com">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-large" id="submit-btn">
+          Save My Bracket
+        </button>
+      </div>
+      <div id="form-message" class="form-message"></div>
+    </form>
+  </section>
+
+  <!-- Donate Section -->
+  <section class="donate-section" id="donate">
+    <div class="donate-content">
+      <h2>Support the Cause</h2>
+      <p>Your donation helps fund African entrepreneurs through the Sandy Rotary Club. The suggested amount is $15, but we gratefully accept any contribution.</p>
+      <div class="donate-amounts">
+        <button class="amount-btn" data-amount="10">$10</button>
+        <button class="amount-btn active" data-amount="15">$15</button>
+        <button class="amount-btn" data-amount="25">$25</button>
+        <button class="amount-btn" data-amount="50">$50</button>
+        <div class="custom-amount">
+          <label for="custom-amount">Custom:</label>
+          <input type="number" id="custom-amount" min="1" placeholder="$">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-large" id="donate-btn">Donate Now</button>
+      <p class="donate-note">Payments processed securely via Stripe. Sandy Rotary Club is a 501(c)(4) organization.</p>
+    </div>
+  </section>
+
+  <!-- Entrepreneur Spotlight Section -->
+  <section class="entrepreneurs-section" id="entrepreneurs">
+    <h2>African Entrepreneur Spotlight</h2>
+    <p class="section-desc">Review business plans, vote for your favorites, and contribute directly to help fund their ventures.</p>
+    <div class="entrepreneur-grid" id="entrepreneur-grid">
+      <!-- Populated by entrepreneurs.js -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>Sandy Rotary Club</h3>
+        <p>Service Above Self</p>
+      </div>
+      <div class="footer-links">
+        <p>1st Annual March -2- Africa Bracket Challenge &bull; 2026</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/teams.js"></script>
+  <script src="js/bracket.js"></script>
+  <script src="js/entrepreneurs.js"></script>
+  <script src="js/supabase.js"></script>
+</body>
+</html>
