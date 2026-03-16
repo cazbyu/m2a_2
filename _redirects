@@ -7,8 +7,8 @@
 /leaderboard.html      /leaderboard.html  200
 /admin.html            /admin.html        200
 
-# Root goes straight to the march2africa page
-/               /index.html        200
+# Root redirects to /march2africa
+/               /march2africa  301!
 
-# Everything else redirects to the foundation march2africa page
-/*              https://sandyrotaryfoundation.org/march2africa/  301
+# Everything else redirects to /march2africa
+/*              /march2africa  301
