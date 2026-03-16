@@ -1158,6 +1158,58 @@ body {
   cursor: pointer;
 }
 
+/* Funded stamp overlay */
+.ent-card-funded-stamp {
+  background: rgba(34, 139, 34, 0.9);
+  color: #fff;
+  text-align: center;
+  padding: 6px 12px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+.ent-card-funded-sub {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  opacity: 0.85;
+  margin-top: 1px;
+}
+
+/* Teams assigned to this entrepreneur */
+.ent-card-teams {
+  margin-top: 10px;
+}
+.ent-card-teams-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.ent-card-teams-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.ent-team-tag {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
 /* Card body */
 .ent-card-body {
   padding: 16px 20px;

@@ -41,7 +41,8 @@
       country: 'Uganda',
       description: 'Saukilan manufactures and sells affordable household detergent in Uganda, providing a locally-made cleaning product to families in her community.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/02/Gods-Grace-Detergent-604x620.jpg',
-      businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/Saukilan-Kapatamoyo.docx.pdf'
+      businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/Saukilan-Kapatamoyo.docx.pdf',
+      funded: true
     },
     {
       id: 'ent-5',
@@ -50,7 +51,8 @@
       country: 'Zambia',
       description: 'Sandra runs a metal fabrication workshop in Zambia, welding and building custom products for local businesses and households.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/02/Snip20260214_1.png',
-      businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/HIGH-VOLTAGE-BUSINESS-PLAN.docx.pdf'
+      businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/HIGH-VOLTAGE-BUSINESS-PLAN.docx.pdf',
+      funded: true
     },
     {
       id: 'ent-6',
@@ -59,7 +61,8 @@
       country: 'Zimbabwe',
       description: 'Kendrick manufactures household and industrial products in Zimbabwe, building a local brand that serves community needs with quality goods.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/02/Snip20260213_7-686x620.png',
-      businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/Key-B_Business-Plan.docx-1-1.docx-3.pdf'
+      businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/Key-B_Business-Plan.docx-1-1.docx-3.pdf',
+      funded: true
     },
     {
       id: 'ent-7',
@@ -68,7 +71,8 @@
       country: 'Zambia',
       description: 'Lyampu bakes and sells fresh pastries and savory dishes from her kitchen in Zambia, serving local customers with affordable, home-style food.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/01/Snip20260126_2.png',
-      businessPlan: 'https://entrapov.com/lyamupus-pastry-kitchen-business-plan/'
+      businessPlan: 'https://entrapov.com/lyamupus-pastry-kitchen-business-plan/',
+      funded: true
     },
     {
       id: 'ent-8',
@@ -77,7 +81,8 @@
       country: 'Malawi',
       description: 'Monica buys and resells quality secondhand clothing in Malawi, making affordable fashion accessible to families in her community.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/01/Snip20260123_4.png',
-      businessPlan: 'https://entrapov.com/wp-content/uploads/2026/01/1754573627541_1754573623418_Entrapov-Business-Plan-Template-Monica.docx-1.pdf'
+      businessPlan: 'https://entrapov.com/wp-content/uploads/2026/01/1754573627541_1754573623418_Entrapov-Business-Plan-Template-Monica.docx-1.pdf',
+      funded: true
     },
     {
       id: 'ent-9',
@@ -230,8 +235,24 @@
       actionsHtml = '<button class="btn-add-to-cart" data-ent-id="' + ent.id + '" data-action="preview">&#128640; Boost</button>';
     }
 
+    // Funded stamp
+    var fundedHtml = ent.funded
+      ? '<div class="ent-card-funded-stamp">FUNDED<span class="ent-card-funded-sub">Next entrepreneur on deck</span></div>'
+      : '';
+
+    // Teams tags
+    var teamsHtml = teams.length > 0
+      ? '<div class="ent-card-teams">' +
+          '<div class="ent-card-teams-label">Teams that help ' + ent.name.split(' ')[0] + ' win</div>' +
+          '<div class="ent-card-teams-list">' +
+            teams.map(function (t) { return '<span class="ent-team-tag">' + t + '</span>'; }).join('') +
+          '</div>' +
+        '</div>'
+      : '';
+
     card.innerHTML =
       photoHtml +
+      fundedHtml +
       '<div class="ent-card-body">' +
         '<h3 class="ent-card-name">' + ent.name + '</h3>' +
         '<div class="ent-card-business">' + ent.business + '</div>' +
@@ -240,6 +261,7 @@
         '<div class="ent-card-desc-label">Business Description</div>' +
         '<p class="ent-card-desc">' + ent.description + '</p>' +
         planHtml +
+        teamsHtml +
       '</div>' +
       '<div class="ent-card-actions">' + actionsHtml + '</div>';
 
