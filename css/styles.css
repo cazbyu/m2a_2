@@ -473,6 +473,148 @@ body {
 .load-status.success { color: var(--color-secondary); }
 .load-status.error { color: var(--color-accent); }
 
+/* ===== Rotary Shark Pond Section ===== */
+.sharkpond-section {
+  padding: 60px 24px 40px;
+  background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 50%, #0d3b2e 100%);
+  color: #fff;
+  text-align: center;
+}
+.sharkpond-header h2 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.sharkpond-header .section-desc {
+  font-size: 1.1rem;
+  color: #90caf9;
+  margin-bottom: 32px;
+}
+.sharkpond-story {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 960px;
+  margin: 0 auto 32px;
+}
+.sharkpond-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: left;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.sharkpond-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(244,160,32,0.4);
+}
+.sharkpond-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+.sharkpond-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: #f4a020;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.sharkpond-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #ccc;
+}
+.sharkpond-card strong { color: #fff; }
+.sharkpond-card em { color: #f4a020; font-style: normal; font-weight: 600; }
+.sharkpond-cta {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  background: rgba(244,160,32,0.1);
+  border: 1px solid rgba(244,160,32,0.3);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #e0e0e0;
+}
+.sharkpond-cta strong { color: #f4a020; }
+
+/* ===== Post-Save Modal ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+.modal-card {
+  background: linear-gradient(135deg, #0d1f3c, #1a3a5c);
+  border: 1px solid rgba(244,160,32,0.3);
+  border-radius: 16px;
+  padding: 40px 32px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-close:hover { color: #fff; }
+.modal-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+.modal-card h3 {
+  font-family: var(--font-display);
+  color: #f4a020;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.modal-card > p {
+  color: #aaa;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+}
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.modal-btn {
+  width: 100%;
+  padding: 14px !important;
+  font-size: 1rem !important;
+  border-radius: 8px !important;
+  text-decoration: none;
+  font-weight: 600;
+  text-align: center;
+}
+.modal-skip {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.modal-skip:hover { color: #aaa; }
+
 /* ===== Donate Section ===== */
 .donate-section {
   padding: 60px 24px;

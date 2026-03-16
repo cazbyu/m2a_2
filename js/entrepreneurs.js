@@ -314,7 +314,7 @@
       `;
     }
 
-    return `<button class="btn-add-to-cart" data-ent-id="${ent.id}" data-action="add">+ Support</button>`;
+    return `<button class="btn-add-to-cart" data-ent-id="${ent.id}" data-action="add">&#128640; Boost</button>`;
   }
 
   // ===== Floating Cart =====
@@ -358,7 +358,7 @@
 
     cartEl.innerHTML = `
       <div class="ent-cart-header" id="ent-cart-toggle">
-        <span>&#128722; My Entrepreneur Support</span>
+        <span>&#128640; My Boosts</span>
         <span class="ent-cart-badge-count">${count} selected &bull; $${total}</span>
         <span class="ent-cart-toggle-icon">&#9660;</span>
       </div>
@@ -368,7 +368,7 @@
           <strong>Total: $${total}</strong>
         </div>
         <button class="btn btn-primary ent-cart-checkout" id="ent-cart-checkout">
-          Checkout &amp; Fund ($${total})
+          &#128640; Boost Now ($${total})
         </button>
       </div>
     `;
@@ -436,7 +436,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         amount: total,
-        description: `Entrepreneur Support: ${allocations}`
+        description: `Entrepreneur Boost: ${allocations}`
       })
     })
       .then(res => res.json())
@@ -453,7 +453,7 @@
           }
           if (checkoutBtn) {
             checkoutBtn.disabled = false;
-            checkoutBtn.textContent = `Checkout & Fund ($${total})`;
+            checkoutBtn.textContent = `\u{1F680} Boost Now ($${total})`;
           }
         }
       })
@@ -463,7 +463,7 @@
         }
         if (checkoutBtn) {
           checkoutBtn.disabled = false;
-          checkoutBtn.textContent = `Checkout & Fund ($${total})`;
+          checkoutBtn.textContent = `\u{1F680} Boost Now ($${total})`;
         }
       });
   }

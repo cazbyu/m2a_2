@@ -17,7 +17,7 @@
     <div class="nav-links">
       <a href="#bracket">Bracket</a>
       <a href="#leaderboard">Leaderboard</a>
-      <a href="#entrepreneurs">Entrepreneur Competition</a>
+      <a href="#sharkpond">Rotary Shark Pond</a>
       <a href="#donate" class="nav-donate">Donate</a>
     </div>
     <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
@@ -35,7 +35,7 @@
         <p class="hero-desc">Fill out your NCAA bracket, support African entrepreneurs, and help the Sandy Rotary Club make a difference. Every bracket counts!</p>
         <div class="hero-actions">
           <a href="#bracket" class="btn btn-primary">Fill Out Your Bracket</a>
-          <a href="#entrepreneurs" class="btn btn-entrepreneur">Support an Entrepreneur</a>
+          <a href="#sharkpond" class="btn btn-entrepreneur">&#127988; Rotary Shark Pond</a>
           <a href="#donate" class="btn btn-secondary">Donate $15</a>
         </div>
       </div>
@@ -246,14 +246,40 @@
     </div>
   </section>
 
+  <!-- Rotary Shark Pond Section -->
+  <section class="sharkpond-section" id="sharkpond">
+    <div class="sharkpond-header">
+      <h2>&#127988; Rotary Shark Pond</h2>
+      <p class="section-desc">Where young leaders meet global entrepreneurs</p>
+    </div>
+
+    <div class="sharkpond-story">
+      <div class="sharkpond-card">
+        <div class="sharkpond-icon">&#127891;</div>
+        <h3>The Sharks</h3>
+        <p>A <strong>DECA business club</strong> in Sandy, Utah will serve as the "Sharks" &mdash; evaluating business plans, learning about the countries, and selecting the winning entrepreneurs. Two finalists will pitch their ideas live to the club!</p>
+      </div>
+      <div class="sharkpond-card">
+        <div class="sharkpond-icon">&#127758;</div>
+        <h3>The Entrepreneurs</h3>
+        <p><strong>Ten entrepreneurs</strong> from Zambia, Malawi, Lesotho, and Kenya are competing for an opportunity to fund their business with a <strong>0% interest microloan</strong>. Their selection is tied to your bracket performance &mdash; but you can give them a <strong>Boost</strong> to push them forward!</p>
+      </div>
+      <div class="sharkpond-card">
+        <div class="sharkpond-icon">&#127942;</div>
+        <h3>Everyone Wins</h3>
+        <p>Rotary provides <strong>capital funding</strong> for the entrepreneurs and a <strong>small scholarship</strong> for the club. When your team wins, you help <em>local and global</em> entrepreneurs win.</p>
+      </div>
+    </div>
+
+    <div class="sharkpond-cta">
+      <p>&#128640; <strong>Give your favorite entrepreneur a Boost!</strong> Your boost is your vote &mdash; the entrepreneur with the most support advances each week.</p>
+    </div>
+  </section>
+
   <!-- Entrepreneur Bracket Section -->
   <section class="entrepreneurs-section" id="entrepreneurs">
-    <h2>Entrepreneur Bracket Challenge</h2>
-    <p class="section-desc">9 African entrepreneurs compete for sponsorship funding. Your donation is your vote &mdash; the entrepreneur with the most funding advances each week!</p>
-    <div class="ent-microloan-info">
-      <div class="microloan-icon">&#127758;</div>
-      <p>Each entrepreneur will receive a <strong>0% interest microloan</strong> to start or grow their business. Select the entrepreneurs you believe are best qualified for funding &mdash; you can support multiple entrepreneurs across different matchups. Your donations go directly toward their microloans!</p>
-    </div>
+    <h2>Entrepreneur Bracket</h2>
+    <p class="section-desc">Select the entrepreneurs you believe are best qualified for funding &mdash; you can boost multiple entrepreneurs across different matchups.</p>
 
     <div class="ent-schedule">
       <div class="ent-week" data-week="1">
@@ -286,6 +312,11 @@
           <p>Receives full sponsorship funding as a 0% interest microloan to start or grow their business.</p>
         </div>
         <div class="prize-card">
+          <div class="prize-icon">&#127891;</div>
+          <h4>DECA Sharks</h4>
+          <p>The business club evaluates finalists in a live pitch event and receives a scholarship from Sandy Rotary.</p>
+        </div>
+        <div class="prize-card">
           <div class="prize-icon">&#11088;</div>
           <h4>NCAA Bracket Champion</h4>
           <p>Recognized as the official Sponsor and invited to a WhatsApp group with the winning entrepreneur.</p>
@@ -307,6 +338,21 @@
       <a href="admin.html" class="admin-link" title="Admin">&#9881;</a>
     </div>
   </footer>
+
+  <!-- Post-Save Modal -->
+  <div class="modal-overlay" id="post-save-modal" style="display:none;">
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div class="modal-icon">&#127942;</div>
+      <h3>Bracket Saved!</h3>
+      <p>Your picks are locked in. Want to make an even bigger impact?</p>
+      <div class="modal-actions">
+        <a href="#sharkpond" class="btn btn-entrepreneur modal-btn" id="modal-boost-btn">&#128640; Boost an Entrepreneur</a>
+        <a href="#donate" class="btn btn-primary modal-btn" id="modal-donate-btn">&#10084; Donate $15</a>
+      </div>
+      <button class="modal-skip" id="modal-skip">Maybe later</button>
+    </div>
+  </div>
 
   <!-- Toast notification -->
   <div class="toast" id="toast"></div>

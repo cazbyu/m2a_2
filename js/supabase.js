@@ -165,6 +165,9 @@
           // Refresh leaderboard
           loadLeaderboard();
         }
+        // Show post-save modal
+        showPostSaveModal();
+
       } catch (err) {
         console.error('Save error:', err);
         showMessage('Error saving bracket. Please try again.', 'error');
@@ -173,6 +176,34 @@
         submitBtn.textContent = 'Save My Bracket';
       }
     });
+  }
+
+  // ===== Post-Save Modal =====
+  function showPostSaveModal() {
+    const modal = document.getElementById('post-save-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+
+    const close = () => { modal.style.display = 'none'; };
+
+    // Close button
+    const closeBtn = document.getElementById('modal-close');
+    if (closeBtn) closeBtn.onclick = close;
+
+    // Skip button
+    const skipBtn = document.getElementById('modal-skip');
+    if (skipBtn) skipBtn.onclick = close;
+
+    // Boost button — close modal then scroll
+    const boostBtn = document.getElementById('modal-boost-btn');
+    if (boostBtn) boostBtn.onclick = () => { close(); };
+
+    // Donate button — close modal then scroll
+    const donateBtn = document.getElementById('modal-donate-btn');
+    if (donateBtn) donateBtn.onclick = () => { close(); };
+
+    // Click outside to close
+    modal.onclick = (e) => { if (e.target === modal) close(); };
   }
 
   function showMessage(text, type) {
