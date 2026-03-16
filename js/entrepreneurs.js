@@ -134,6 +134,7 @@
 
   // ===== Cart State =====
   var cart = {};
+  var rotaryClub = '';
 
   var container = document.getElementById('ent-bracket');
   if (!container) return;
@@ -296,6 +297,10 @@
       '</div>' +
       '<div class="ent-cart-body" id="ent-cart-body">' +
         cartItems +
+        '<div class="ent-cart-rotary">' +
+          '<label for="rotary-club-input" class="ent-cart-rotary-label">What Rotary Club are you with?</label>' +
+          '<input type="text" id="rotary-club-input" class="ent-cart-rotary-input" placeholder="e.g. Sandy Rotary Club" value="' + (rotaryClub || '').replace(/"/g, '&quot;') + '">' +
+        '</div>' +
         '<div class="ent-cart-total"><strong>Total: $' + total + '</strong></div>' +
         '<button class="btn btn-primary ent-cart-checkout" id="ent-cart-checkout">&#128640; Boost Now ($' + total + ')</button>' +
       '</div>';
@@ -308,6 +313,14 @@
       var icon = cartEl.querySelector('.ent-cart-toggle-icon');
       icon.textContent = body.classList.contains('open') ? '\u25B2' : '\u25BC';
     });
+
+    // Rotary Club input — sync value on typing
+    var clubInput = cartEl.querySelector('#rotary-club-input');
+    if (clubInput) {
+      clubInput.addEventListener('input', function () {
+        rotaryClub = clubInput.value;
+      });
+    }
 
     // Checkout button
     var checkoutBtn = cartEl.querySelector('#ent-cart-checkout');
@@ -473,7 +486,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         amount: total,
-        description: 'Entrepreneur Boost: ' + allocations
+        description: 'Entrepreneur Boost: ' + allocations + (rotaryClub ? ' | Club: ' + rotaryClub : '')
       })
     })
       .then(function (res) { return res.json(); })
@@ -493,6 +506,7 @@
               cart: Object.assign({}, cart),
               entNames: entNames,
               allocations: allocations,
+              rotaryClub: rotaryClub || '',
               timestamp: Date.now()
             }));
           } catch (e) { /* ignore */ }

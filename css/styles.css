@@ -1485,6 +1485,34 @@ body {
   font-weight: 700;
   flex-shrink: 0;
 }
+/* Rotary Club field in cart */
+.ent-cart-rotary {
+  padding: 8px 0;
+  margin-top: 4px;
+  border-top: 1px solid #e8e0d4;
+}
+.ent-cart-rotary-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin-bottom: 4px;
+}
+.ent-cart-rotary-input {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: #fff;
+  box-sizing: border-box;
+}
+.ent-cart-rotary-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(233, 168, 37, 0.2);
+}
+
 .ent-cart-total {
   padding: 10px 0 8px;
   text-align: center;
