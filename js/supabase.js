@@ -477,9 +477,12 @@
 
     if (!pending) {
       // No pending info but donation succeeded — show generic success
+      console.warn('processStripeReturn: No pending donation data found in localStorage');
       if (window.BracketEngine) window.BracketEngine.showToast('Thank you for your donation!');
       return;
     }
+
+    console.log('processStripeReturn: pending data =', JSON.stringify(pending));
 
     if (isDemo()) {
       console.log('Demo mode — donation recorded locally:', pending);

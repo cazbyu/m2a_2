@@ -127,11 +127,11 @@ const TOURNAMENT = {
 
 // Country → flag image path mapping
 const COUNTRY_FLAGS = {
-  'Malawi':   'assets/Malawi.png',
-  'Zambia':   'assets/Zambia.png',
-  'Uganda':   'assets/Uganda.png',
-  'Kenya':    'assets/Kenya.png',
-  'Zimbabwe': 'assets/Zimbabwe.png'
+  'Malawi':   '/assets/Malawi.png',
+  'Zambia':   '/assets/Zambia.png',
+  'Uganda':   '/assets/Uganda.png',
+  'Kenya':    '/assets/Kenya.png',
+  'Zimbabwe': '/assets/Zimbabwe.png'
 };
 
 const TEAM_ENTREPRENEUR_MAP = {

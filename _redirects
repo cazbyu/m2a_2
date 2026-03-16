@@ -3,6 +3,11 @@
 /march2africa/         /index.html        200
 /march2africa/leaderboard  /leaderboard.html  200
 
+# Serve static assets under /march2africa/ paths
+/march2africa/css/*       /css/:splat        200
+/march2africa/js/*        /js/:splat         200
+/march2africa/assets/*    /assets/:splat     200
+
 # Allow direct access to leaderboard and admin pages
 /leaderboard.html      /leaderboard.html  200
 /admin.html            /admin.html        200
