@@ -597,8 +597,8 @@
       roundSelect.innerHTML = `
         <option value="1">Round 1 (R64) &mdash; 5 pts</option>
         <option value="2">Round 2 (R32) &mdash; 10 pts</option>
-        <option value="3">Sweet 16 &mdash; 20 pts</option>
-        <option value="4">Elite 8 &mdash; 40 pts</option>
+        <option value="3">16 Remain &mdash; 20 pts</option>
+        <option value="4">8 Left &mdash; 40 pts</option>
       `;
       roundSelect.style.display = '';
     }

@@ -114,8 +114,8 @@ const TOURNAMENT = {
   roundNames: [
     "Round of 64",
     "Round of 32",
-    "Sweet 16",
-    "Elite 8",
+    "16 Remain",
+    "8 Left",
     "Finals",
     "Championship"
   ]

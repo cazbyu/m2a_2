@@ -46,8 +46,8 @@
   const ROUND_LABELS = {
     1: { name: '1st Round',     dates: 'Mar 20–21' },
     2: { name: '2nd Round',     dates: 'Mar 22–23' },
-    3: { name: 'Sweet 16',     dates: 'Mar 27–28' },
-    4: { name: 'Elite 8',      dates: 'Mar 29–30' }
+    3: { name: '16 Remain',    dates: 'Mar 27–28' },
+    4: { name: '8 Left',       dates: 'Mar 29–30' }
   };
   const FF_LABELS = {
     semi: { name: 'Finals',        dates: 'Apr 5' },

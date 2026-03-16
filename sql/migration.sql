@@ -226,8 +226,8 @@ CREATE POLICY "Allow public insert on entrepreneur votes"
 -- ============================================================
 -- Round 1 (R64):     5 points per correct pick  (32 games = 160 max)
 -- Round 2 (R32):    10 points per correct pick  (16 games = 160 max)
--- Round 3 (S16):    20 points per correct pick  ( 8 games = 160 max)
--- Round 4 (E8):     40 points per correct pick  ( 4 games = 160 max)
+-- Round 3 (16):     20 points per correct pick  ( 8 games = 160 max)
+-- Round 4 (8):      40 points per correct pick  ( 4 games = 160 max)
 -- Finals:          80 points per correct pick  ( 2 games = 160 max)
 -- Championship:    160 points per correct pick  ( 1 game  = 160 max)
 -- ─────────────────────────────────────────────────────────────

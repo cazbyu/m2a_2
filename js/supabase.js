@@ -26,8 +26,8 @@
   const POINTS_PER_ROUND = {
     1: 5,     // Round of 64
     2: 10,    // Round of 32
-    3: 20,    // Sweet 16
-    4: 40,    // Elite 8
+    3: 20,    // 16 Remain
+    4: 40,    // 8 Left
     5: 80,    // Finals
     6: 160    // Championship
   };
