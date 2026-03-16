@@ -161,22 +161,22 @@
           showMessage('Bracket saved successfully!', 'success');
           window.BracketEngine.showToast('Bracket saved!');
         } else {
-          // Check if user already submitted with this email + bracket name
-          const existing = await supabaseRequest(TABLE_BRACKETS, 'GET', null,
-            `?email=eq.${encodeURIComponent(email)}&bracket_name=eq.${encodeURIComponent(bracketName)}&select=id&limit=1`);
-
-          if (existing && existing.length > 0) {
-            // Update existing bracket
-            await supabaseRequest(TABLE_BRACKETS, 'PATCH', bracketData,
-              `?id=eq.${existing[0].id}`);
-            showMessage('Bracket updated successfully!' + (bracketName ? ` (${bracketName})` : ''), 'success');
-            window.BracketEngine.showToast('Bracket updated!');
-          } else {
-            // Insert new bracket
-            await supabaseRequest(TABLE_BRACKETS, 'POST', bracketData);
-            showMessage('Bracket saved successfully!' + (bracketName ? ` (${bracketName})` : ''), 'success');
-            window.BracketEngine.showToast('Bracket saved!');
-          }
+          // Use RPC function to save (bypasses PostgREST schema cache issues)
+          const rpcBody = {
+            p_first_name: firstName,
+            p_last_name: lastName,
+            p_email: email,
+            p_bracket_name: bracketName,
+            p_picks: picks,
+            p_champion: champion,
+            p_champ_score1: scores.score1 || 0,
+            p_champ_score2: scores.score2 || 0,
+            p_total_score: 0
+          };
+          const result = await supabaseRequest('rpc/save_bracket', 'POST', rpcBody);
+          const action = result && result.action === 'updated' ? 'updated' : 'saved';
+          showMessage(`Bracket ${action} successfully!` + (bracketName ? ` (${bracketName})` : ''), 'success');
+          window.BracketEngine.showToast(`Bracket ${action}!`);
 
           // Refresh leaderboard
           loadLeaderboard();

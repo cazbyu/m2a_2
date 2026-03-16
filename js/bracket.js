@@ -580,9 +580,9 @@
   }
 
   // ===== Countdown Timer =====
-  // Brackets lock Thursday March 19 at 10:05 AM MT (Mountain Daylight = UTC-6)
+  // Brackets lock Thursday March 19 at 10:10 AM MT (Mountain Daylight = UTC-6)
 
-  const BRACKET_DEADLINE = new Date('2026-03-19T16:05:00Z'); // 10:05 AM MDT
+  const BRACKET_DEADLINE = new Date('2026-03-19T16:10:00Z'); // 10:10 AM MDT
 
   function setupCountdown() {
     const banner = document.getElementById('countdown-banner');
