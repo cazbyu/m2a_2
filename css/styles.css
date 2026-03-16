@@ -1018,6 +1018,120 @@ body {
 }
 .btn-add-to-cart:hover { background: var(--color-primary-dark); }
 
+/* ===== Entrepreneur Preview Popup ===== */
+.ent-popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.ent-popup-card {
+  background: linear-gradient(135deg, #0d1f3c, #1a3a5c);
+  border: 1px solid rgba(244,160,32,0.3);
+  border-radius: 16px;
+  max-width: 420px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.ent-popup-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 2;
+  line-height: 1;
+}
+.ent-popup-close:hover { color: #fff; }
+.ent-popup-photo {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  background: #0a1628;
+}
+.ent-popup-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ent-popup-info {
+  padding: 20px 24px 12px;
+}
+.ent-popup-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 0 0 4px;
+  letter-spacing: 1px;
+}
+.ent-popup-business {
+  font-size: 1rem;
+  color: #f4a020;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.ent-popup-country {
+  font-size: 0.8rem;
+  color: #90caf9;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.ent-popup-desc {
+  font-size: 0.9rem;
+  color: #ccc;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+.ent-popup-plan-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: #90caf9;
+  text-decoration: none;
+  font-weight: 500;
+}
+.ent-popup-plan-link:hover { color: #fff; text-decoration: underline; }
+.ent-popup-actions {
+  padding: 16px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ent-popup-boost {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.ent-popup-cancel {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: underline;
+}
+.ent-popup-cancel:hover { color: #aaa; }
+
+@media (max-width: 480px) {
+  .ent-popup-photo { height: 180px; }
+  .ent-popup-card { border-radius: 12px; }
+}
+
 /* Cart Controls (inline +/-) */
 .ent-cart-controls {
   display: flex;

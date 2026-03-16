@@ -11,6 +11,8 @@
       id: 'ent-1',
       name: 'Kate Nanyangwe',
       business: 'Nails By Kate & Hair Salon',
+      country: 'Zambia',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/03/Snip20260314_2.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/03/Nails-By-Kate-Business-Plan.docx.pdf',
       raised: 0
@@ -19,6 +21,8 @@
       id: 'ent-2',
       name: 'Jane Ndashe',
       business: 'JP Enterprise',
+      country: 'Zambia',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/03/Snip20260314_1.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/03/Entrapov-Business-Plan-JP-ENTERPRISE.docx.pdf',
       raised: 0
@@ -27,6 +31,8 @@
       id: 'ent-3',
       name: 'Nanyangwe Katai',
       business: 'Chichi Braids',
+      country: 'Zambia',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/02/Snip20260226_1.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/Entrapov-Business-Plan-CHICHI-BRAIDS.docx.pdf',
       raised: 0
@@ -35,6 +41,8 @@
       id: 'ent-4',
       name: 'Saukilan Kapatamoyo',
       business: "God's Grace Detergent",
+      country: 'Malawi',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/02/Gods-Grace-Detergent-604x620.jpg',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/Saukilan-Kapatamoyo.docx.pdf',
       raised: 0
@@ -43,6 +51,8 @@
       id: 'ent-5',
       name: 'Sandra Chisala',
       business: 'High Voltage Fabrication',
+      country: 'Zambia',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/02/Snip20260214_1.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/HIGH-VOLTAGE-BUSINESS-PLAN.docx.pdf',
       raised: 0
@@ -51,6 +61,8 @@
       id: 'ent-6',
       name: 'Kendrick B. Makhurane',
       business: 'Key B Manufacturers',
+      country: 'Lesotho',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/02/Snip20260213_7-686x620.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/Key-B_Business-Plan.docx-1-1.docx-3.pdf',
       raised: 0
@@ -59,6 +71,8 @@
       id: 'ent-7',
       name: 'Lyampu Mubiana',
       business: "Lyamupu's Pastry Kitchen",
+      country: 'Zambia',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/01/Snip20260126_2.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/01/Lyamupus-Pastry-Kitchen.docx.pdf',
       raised: 0
@@ -67,6 +81,8 @@
       id: 'ent-8',
       name: 'Monica Ntchalachala',
       business: 'Femmo Second Hand Clothes',
+      country: 'Malawi',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/01/Snip20260123_4.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/01/1754573627541_1754573623418_Entrapov-Business-Plan-Template-Monica.docx-1.pdf',
       raised: 0
@@ -75,6 +91,8 @@
       id: 'ent-9',
       name: 'Enrique Hannock',
       business: 'Nexora Technology Company',
+      country: 'Kenya',
+      description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/01/Snip20260113_2-536x620.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/01/ENRIQUE-HANNOCK-PROPOSAL.pdf.pdf',
       raised: 0
@@ -314,7 +332,7 @@
       `;
     }
 
-    return `<button class="btn-add-to-cart" data-ent-id="${ent.id}" data-action="add">&#128640; Boost</button>`;
+    return `<button class="btn-add-to-cart" data-ent-id="${ent.id}" data-action="preview">&#128640; Boost</button>`;
   }
 
   // ===== Floating Cart =====
@@ -390,6 +408,11 @@
   // ===== Cart Actions =====
   function handleCartAction(entId, action) {
     switch (action) {
+      case 'preview':
+        if (!hasConflict(entId)) {
+          showEntrepreneurPopup(entId);
+        }
+        return; // Don't re-render bracket — popup handles it
       case 'add':
         if (!hasConflict(entId)) {
           cart[entId] = 5;
@@ -410,6 +433,59 @@
         break;
     }
     renderBracket();
+  }
+
+  // ===== Entrepreneur Preview Popup =====
+  function showEntrepreneurPopup(entId) {
+    const ent = getEnt(entId);
+    if (!ent) return;
+
+    // Remove any existing popup
+    const existing = document.getElementById('ent-popup-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'ent-popup-overlay';
+    overlay.className = 'ent-popup-overlay';
+
+    overlay.innerHTML = `
+      <div class="ent-popup-card">
+        <button class="ent-popup-close" id="ent-popup-close">&times;</button>
+        <div class="ent-popup-photo">
+          <img src="${ent.photo}" alt="${ent.name}">
+        </div>
+        <div class="ent-popup-info">
+          <h3 class="ent-popup-name">${ent.name}</h3>
+          <div class="ent-popup-business">${ent.business}</div>
+          <div class="ent-popup-country">${ent.country || ''}</div>
+          <p class="ent-popup-desc">${ent.description || 'Description coming soon.'}</p>
+          <a href="${ent.businessPlan}" target="_blank" class="ent-popup-plan-link">View Full Business Plan &#8599;</a>
+        </div>
+        <div class="ent-popup-actions">
+          <button class="btn btn-primary ent-popup-boost" id="ent-popup-boost">&#128640; Boost $5</button>
+          <button class="ent-popup-cancel" id="ent-popup-cancel">Maybe Later</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+
+    // Close handlers
+    overlay.querySelector('#ent-popup-close').addEventListener('click', close);
+    overlay.querySelector('#ent-popup-cancel').addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+    // Boost handler — add to cart and close
+    overlay.querySelector('#ent-popup-boost').addEventListener('click', () => {
+      cart[entId] = 5;
+      renderBracket();
+      close();
+      if (window.BracketEngine) {
+        window.BracketEngine.showToast(`${ent.name} boosted!`);
+      }
+    });
   }
 
   function handleCheckout() {
