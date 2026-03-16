@@ -121,6 +121,14 @@
     slot.appendChild(seedSpan);
     slot.appendChild(nameSpan);
 
+    // Add country flag from entrepreneur mapping
+    if (team && typeof TEAM_ENTREPRENEUR_MAP !== 'undefined' && TEAM_ENTREPRENEUR_MAP[team.name]) {
+      const flagSpan = document.createElement('span');
+      flagSpan.className = 'team-flag';
+      flagSpan.textContent = TEAM_ENTREPRENEUR_MAP[team.name].flag;
+      slot.appendChild(flagSpan);
+    }
+
     if (team) {
       slot.dataset.team = team.name;
       slot.dataset.seed = team.seed;
@@ -166,6 +174,19 @@
     saveToLocalStorage();
   }
 
+  function updateSlotFlag(slotEl, teamName) {
+    // Remove existing flag if any
+    const existing = slotEl.querySelector('.team-flag');
+    if (existing) existing.remove();
+    // Add flag from entrepreneur mapping
+    if (teamName && typeof TEAM_ENTREPRENEUR_MAP !== 'undefined' && TEAM_ENTREPRENEUR_MAP[teamName]) {
+      const flagSpan = document.createElement('span');
+      flagSpan.className = 'team-flag';
+      flagSpan.textContent = TEAM_ENTREPRENEUR_MAP[teamName].flag;
+      slotEl.appendChild(flagSpan);
+    }
+  }
+
   function advanceTeam(gameId, team, seed) {
     const next = getNextGame(gameId);
     if (!next) return;
@@ -181,6 +202,7 @@
         slotEl.dataset.seed = seed;
         slotEl.querySelector('.seed').textContent = seed;
         slotEl.querySelector('.name').textContent = team;
+        updateSlotFlag(slotEl, team);
         slotEl.classList.remove('empty');
         slotEl.classList.add('has-team');
       }
@@ -204,6 +226,7 @@
       targetSlot.dataset.seed = seed;
       targetSlot.querySelector('.seed').textContent = seed;
       targetSlot.querySelector('.name').textContent = team;
+      updateSlotFlag(targetSlot, team);
       targetSlot.classList.remove('empty');
       targetSlot.classList.add('has-team');
     }

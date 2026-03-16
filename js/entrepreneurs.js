@@ -38,7 +38,7 @@
       id: 'ent-4',
       name: 'Saukilan Kapatamoyo',
       business: "God's Grace Detergent",
-      country: 'Malawi',
+      country: 'Uganda',
       description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/02/Gods-Grace-Detergent-604x620.jpg',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/02/Saukilan-Kapatamoyo.docx.pdf'
@@ -83,7 +83,7 @@
       id: 'ent-9',
       name: 'Enrique Hannock',
       business: 'Nexora Technology Company',
-      country: 'Kenya',
+      country: 'Malawi',
       description: 'Short description coming soon.',
       photo: 'https://entrapov.com/wp-content/uploads/2026/01/Snip20260113_2-536x620.png',
       businessPlan: 'https://entrapov.com/wp-content/uploads/2026/01/ENRIQUE-HANNOCK-PROPOSAL.pdf.pdf'
@@ -100,8 +100,17 @@
     {
       id: 'ent-11',
       name: 'Esther Ruhara',
-      business: 'TBD',
+      business: 'Inspire Hands Creation Enterprise',
       country: 'Kenya',
+      description: 'Details coming soon.',
+      photo: '',
+      businessPlan: ''
+    },
+    {
+      id: 'ent-12',
+      name: 'Lisa Jane Sithole',
+      business: 'TBD',
+      country: 'Zimbabwe',
       description: 'Details coming soon.',
       photo: '',
       businessPlan: ''

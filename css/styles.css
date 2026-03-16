@@ -286,6 +286,7 @@ body {
   justify-content: space-around;
   min-width: 140px;
   padding: 0 4px;
+  padding-top: 36px;
   position: relative;
 }
 /* Right-side regions: align text to right edge */
@@ -299,8 +300,11 @@ body {
 
 /* ===== Round Date Labels ===== */
 .round-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   text-align: center;
-  margin-bottom: 6px;
   padding: 4px 0;
   line-height: 1.2;
 }
@@ -375,6 +379,16 @@ body {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.team-slot .team-flag {
+  font-size: 0.75rem;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+.bracket-right .team-slot .team-flag {
+  margin-left: 0;
+  margin-right: 4px;
+  order: -1;
 }
 
 /* ===== Bracket Connector Lines ===== */
