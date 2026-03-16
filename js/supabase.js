@@ -526,12 +526,14 @@
         }
 
       } else {
-        // General donation — record with NULL entrepreneur_id
+        // General donation — record with NULL entrepreneur_id initially
+        const donationAmount = pending.amount || 0;
+
         await supabaseRequest(TABLE_CONTRIBUTIONS, 'POST', {
           entrepreneur_id: null,
           contributor_email: contributorEmail,
           contributor_name: contributorName,
-          amount: pending.amount || 0,
+          amount: donationAmount,
           stripe_payment_id: sessionId || '',
           status: 'completed'
         });
@@ -544,15 +546,14 @@
             if (existing && existing.length > 0) {
               const currentAmt = parseFloat(existing[0].donation_amount) || 0;
               await supabaseRequest(TABLE_BRACKETS, 'PATCH',
-                { donation_amount: currentAmt + (pending.amount || 0) },
+                { donation_amount: currentAmt + donationAmount },
                 '?id=eq.' + existing[0].id);
             }
           } catch (e) { /* ignore bracket update failure */ }
         }
 
-        if (window.BracketEngine) {
-          window.BracketEngine.showToast('Thank you for your donation of $' + (pending.amount || 0) + '!');
-        }
+        // Show thank-you + ask if they want to boost an entrepreneur
+        showDonationBoostModal(donationAmount, entNameToUuid, contributorEmail, contributorName, sessionId);
       }
     } catch (err) {
       console.error('Error recording donation:', err);
@@ -564,6 +565,102 @@
       localStorage.removeItem('m2a_pending_donation');
       localStorage.removeItem('m2a_ent_cart');
     }
+  }
+
+  // ===== Post-Donation Boost Modal =====
+  // After a general donation, ask if they'd like to attribute it to an entrepreneur.
+  function showDonationBoostModal(amount, entNameToUuid, email, name, sessionId) {
+    // Build entrepreneur list from the UUID map we already fetched
+    const entrepreneurs = Object.entries(entNameToUuid).map(([nameKey, uuid]) => ({
+      name: nameKey.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      uuid: uuid
+    }));
+
+    if (entrepreneurs.length === 0) {
+      // No entrepreneurs available — just show a thank you
+      if (window.BracketEngine) {
+        window.BracketEngine.showToast('Thank you for your donation of $' + amount + '!');
+      }
+      return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'donation-boost-modal';
+    overlay.style.display = 'flex';
+
+    const entListHtml = entrepreneurs.map(e =>
+      '<button class="donation-boost-ent-btn" data-uuid="' + e.uuid + '" data-name="' + e.name + '">' +
+        e.name +
+      '</button>'
+    ).join('');
+
+    overlay.innerHTML =
+      '<div class="modal-card donation-boost-modal">' +
+        '<button class="modal-close" id="boost-modal-close">&times;</button>' +
+        '<div class="modal-icon">&#10084;&#65039;</div>' +
+        '<h3>Thank You for Your $' + amount + ' Donation!</h3>' +
+        '<p>Would you like your donation to count as a <strong>Boost</strong> for a specific entrepreneur?</p>' +
+        '<div class="donation-boost-list">' + entListHtml + '</div>' +
+        '<button class="modal-skip" id="boost-modal-skip">No thanks, keep it as a general donation</button>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    const close = () => { overlay.remove(); };
+
+    overlay.querySelector('#boost-modal-close').addEventListener('click', close);
+    overlay.querySelector('#boost-modal-skip').addEventListener('click', () => {
+      close();
+      if (window.BracketEngine) {
+        window.BracketEngine.showToast('Thank you for your donation of $' + amount + '!');
+      }
+    });
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        close();
+        if (window.BracketEngine) {
+          window.BracketEngine.showToast('Thank you for your donation of $' + amount + '!');
+        }
+      }
+    });
+
+    // Handle entrepreneur selection
+    overlay.querySelectorAll('.donation-boost-ent-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const entUuid = btn.dataset.uuid;
+        const entName = btn.dataset.name;
+
+        // Highlight selected button
+        overlay.querySelectorAll('.donation-boost-ent-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        btn.textContent = 'Saving...';
+
+        try {
+          // Record an additional contribution attributed to this entrepreneur
+          await supabaseRequest(TABLE_CONTRIBUTIONS, 'POST', {
+            entrepreneur_id: entUuid,
+            contributor_email: email,
+            contributor_name: name,
+            amount: amount,
+            stripe_payment_id: (sessionId || '') + '-boost-attribution',
+            status: 'completed'
+          });
+
+          close();
+          if (window.BracketEngine) {
+            window.BracketEngine.showToast('Your $' + amount + ' donation is now boosting ' + entName + '!');
+          }
+        } catch (err) {
+          console.error('Error attributing boost:', err);
+          btn.textContent = entName;
+          btn.classList.remove('selected');
+          if (window.BracketEngine) {
+            window.BracketEngine.showToast('Could not attribute boost. Your donation was still recorded!');
+          }
+        }
+      });
+    });
   }
 
   // ===== Public API =====

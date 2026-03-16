@@ -763,6 +763,42 @@ body {
 }
 .modal-leaderboard-link:hover { text-decoration: underline; }
 
+/* Donation Boost Modal */
+.donation-boost-modal {
+  max-width: 420px;
+}
+.donation-boost-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.donation-boost-ent-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+.donation-boost-ent-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-selected-bg);
+}
+.donation-boost-ent-btn.selected {
+  border-color: var(--color-secondary);
+  background: #e8f5e1;
+  color: var(--color-secondary);
+}
+
 /* ===== Donate Section ===== */
 .donate-section {
   padding: 60px 24px;

@@ -304,7 +304,54 @@
         delete cart[entId];
         break;
     }
-    renderCards();
+
+    // For +/- changes, do a lightweight update instead of full re-render
+    // so the floating cart stays open
+    if (action === 'plus' || action === 'minus') {
+      updateCartAmounts();
+    } else {
+      renderCards();
+    }
+  }
+
+  // ===== Lightweight Cart Update =====
+  // Updates amounts in-place without rebuilding the DOM (keeps cart open)
+  function updateCartAmounts() {
+    // Update amounts on card controls
+    document.querySelectorAll('.ent-cart-controls').forEach(function (ctrl) {
+      var eid = ctrl.dataset.entId;
+      var amtSpan = ctrl.querySelector('.ent-cart-amount');
+      if (amtSpan && cart[eid]) {
+        amtSpan.textContent = '$' + cart[eid];
+      }
+    });
+
+    // Update floating cart item amounts
+    var cartEl = document.getElementById('ent-cart-floating');
+    if (!cartEl) return;
+
+    // Update individual item amounts
+    cartEl.querySelectorAll('.ent-cart-item-controls').forEach(function (ctrl) {
+      var minusBtn = ctrl.querySelector('[data-action="minus"]');
+      if (!minusBtn) return;
+      var eid = minusBtn.dataset.entId;
+      var amtSpan = ctrl.querySelector('span');
+      if (amtSpan && cart[eid]) {
+        amtSpan.textContent = '$' + cart[eid];
+      }
+    });
+
+    // Update totals
+    var total = getCartTotal();
+    var count = getCartCount();
+    var badge = cartEl.querySelector('.ent-cart-badge-count');
+    if (badge) badge.textContent = count + ' selected \u2022 $' + total;
+
+    var totalEl = cartEl.querySelector('.ent-cart-total strong');
+    if (totalEl) totalEl.textContent = 'Total: $' + total;
+
+    var checkoutBtn = cartEl.querySelector('.ent-cart-checkout');
+    if (checkoutBtn) checkoutBtn.textContent = '\u{1F680} Boost Now ($' + total + ')';
   }
 
   // ===== Entrepreneur Preview Popup =====
