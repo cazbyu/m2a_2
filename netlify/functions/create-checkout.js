@@ -17,7 +17,8 @@ exports.handler = async (event) => {
     const productName = description || 'March -2- Africa Bracket Challenge Donation';
     const productDesc = 'Thanks for helping Rotary make the world a better place';
 
-    const origin = event.headers.origin || event.headers.referer || 'https://march2africa.netlify.app';
+    // Always redirect back to the March 2 Africa page on sandyrotaryfoundation.org
+    const returnBase = 'https://sandyrotaryfoundation.org/march2africa/';
 
     const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
@@ -32,8 +33,8 @@ exports.handler = async (event) => {
         'line_items[0][price_data][product_data][description]': productDesc,
         'line_items[0][price_data][unit_amount]': amountCents.toString(),
         'line_items[0][quantity]': '1',
-        'success_url': `${origin}?donation=success&session_id={CHECKOUT_SESSION_ID}`,
-        'cancel_url': `${origin}?donation=cancelled`,
+        'success_url': `${returnBase}?donation=success&session_id={CHECKOUT_SESSION_ID}`,
+        'cancel_url': `${returnBase}?donation=cancelled`,
         'submit_type': 'donate'
       }).toString()
     });

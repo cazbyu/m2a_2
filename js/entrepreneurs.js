@@ -311,18 +311,28 @@
         '</div>';
       }).join('');
 
-    // Champion suggestion banner
+    // Champion suggestion banner — always show context about who they're helping
     var suggestionHtml = '';
     var suggestion = getChampionSuggestion();
     if (suggestion) {
+      var flagSrc = (typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[suggestion.country]) || '';
+      var flagImg = flagSrc ? '<img src="' + flagSrc + '" alt="' + suggestion.country + '" class="ent-cart-suggestion-flag">' : '';
       var alreadyInCart = cart[suggestion.entId] && cart[suggestion.entId] > 0;
       if (alreadyInCart) {
-        var flagSrc = (typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[suggestion.country]) || '';
-        var flagImg = flagSrc ? '<img src="' + flagSrc + '" alt="' + suggestion.country + '" class="ent-cart-suggestion-flag">' : '';
         suggestionHtml = '<div class="ent-cart-suggestion">' +
           flagImg + ' Your donation boosts <strong>' + suggestion.name + '</strong> from ' + suggestion.country +
+          ' <a href="#entrepreneurs" class="ent-cart-change-link">Change</a>' +
+        '</div>';
+      } else {
+        suggestionHtml = '<div class="ent-cart-suggestion">' +
+          flagImg + ' Your bracket champion <strong>' + suggestion.team + '</strong> helps <strong>' + suggestion.name + '</strong> from ' + suggestion.country +
+          ' &mdash; <button class="ent-cart-add-suggestion" data-ent-id="' + suggestion.entId + '">Add Boost</button>' +
         '</div>';
       }
+    } else {
+      suggestionHtml = '<div class="ent-cart-suggestion ent-cart-suggestion-all">' +
+        '&#127758; You are helping all the entrepreneurs! <a href="#entrepreneurs" class="ent-cart-change-link">Browse &amp; choose</a>' +
+      '</div>';
     }
 
     cartEl.innerHTML =
@@ -334,13 +344,20 @@
       '<div class="ent-cart-body" id="ent-cart-body">' +
         suggestionHtml +
         cartItems +
-        '<a href="#entrepreneurs" class="ent-cart-browse-link">Browse all entrepreneurs &darr;</a>' +
+        '<a href="#entrepreneurs" class="ent-cart-browse-link">+ Add more entrepreneurs</a>' +
+        '<div class="ent-cart-donor-info">' +
+          '<label for="cart-donor-name" class="ent-cart-rotary-label">Your Name</label>' +
+          '<input type="text" id="cart-donor-name" class="ent-cart-rotary-input" placeholder="First Last">' +
+          '<label for="cart-donor-email" class="ent-cart-rotary-label">Your Email</label>' +
+          '<input type="email" id="cart-donor-email" class="ent-cart-rotary-input" placeholder="your@email.com">' +
+        '</div>' +
         '<div class="ent-cart-rotary">' +
           '<label for="rotary-club-input" class="ent-cart-rotary-label">What Rotary Club are you with?</label>' +
           '<input type="text" id="rotary-club-input" class="ent-cart-rotary-input" placeholder="e.g. Sandy Rotary Club" value="' + (rotaryClub || '').replace(/"/g, '&quot;') + '">' +
         '</div>' +
         '<div class="ent-cart-total"><strong>Total: $' + total + '</strong></div>' +
         '<button class="btn btn-primary ent-cart-checkout" id="ent-cart-checkout">&#128640; Boost Now ($' + total + ')</button>' +
+        '<div class="ent-cart-note">No donation is required to play the bracket challenge</div>' +
       '</div>';
 
     // Toggle cart body
@@ -352,11 +369,36 @@
       icon.textContent = body.classList.contains('open') ? '\u25B2' : '\u25BC';
     });
 
+    // Pre-fill donor name/email from bracket form if available
+    var donorNameInput = cartEl.querySelector('#cart-donor-name');
+    var donorEmailInput = cartEl.querySelector('#cart-donor-email');
+    if (donorNameInput) {
+      var fnEl = document.getElementById('first-name');
+      var lnEl = document.getElementById('last-name');
+      var existingName = ((fnEl ? fnEl.value.trim() : '') + ' ' + (lnEl ? lnEl.value.trim() : '')).trim();
+      if (existingName) donorNameInput.value = existingName;
+    }
+    if (donorEmailInput) {
+      var emailEl = document.getElementById('email');
+      var existingEmail = emailEl ? emailEl.value.trim() : '';
+      if (existingEmail) donorEmailInput.value = existingEmail;
+    }
+
     // Rotary Club input — sync value on typing
     var clubInput = cartEl.querySelector('#rotary-club-input');
     if (clubInput) {
       clubInput.addEventListener('input', function () {
         rotaryClub = clubInput.value;
+      });
+    }
+
+    // Add suggestion button (if bracket champion not yet in cart)
+    var addSuggBtn = cartEl.querySelector('.ent-cart-add-suggestion');
+    if (addSuggBtn) {
+      addSuggBtn.addEventListener('click', function () {
+        var entId = addSuggBtn.dataset.entId;
+        cart[entId] = (cart[entId] || 0) + 5;
+        renderCards();
       });
     }
 
@@ -537,13 +579,21 @@
               var e = getEnt(eid);
               if (e) entNames[eid] = e.name;
             });
-            // Grab contributor info from bracket form (if filled in)
+            // Grab contributor info from bracket form first, then cart donor fields
             var emailEl = document.getElementById('email');
             var fnEl = document.getElementById('first-name');
             var lnEl = document.getElementById('last-name');
-            var contributorEmail = emailEl ? emailEl.value.trim() : '';
-            var contributorFirst = fnEl ? fnEl.value.trim() : '';
-            var contributorLast = lnEl ? lnEl.value.trim() : '';
+            var cartDonorName = document.getElementById('cart-donor-name');
+            var cartDonorEmail = document.getElementById('cart-donor-email');
+            var contributorEmail = (emailEl && emailEl.value.trim()) || (cartDonorEmail && cartDonorEmail.value.trim()) || '';
+            var contributorFirst = (fnEl && fnEl.value.trim()) || '';
+            var contributorLast = (lnEl && lnEl.value.trim()) || '';
+            // If bracket form name is empty, parse from cart donor name field
+            if (!contributorFirst && cartDonorName && cartDonorName.value.trim()) {
+              var nameParts = cartDonorName.value.trim().split(/\s+/);
+              contributorFirst = nameParts[0] || '';
+              contributorLast = nameParts.slice(1).join(' ') || '';
+            }
 
             localStorage.setItem('m2a_ent_cart', JSON.stringify(cart));
             localStorage.setItem('m2a_pending_donation', JSON.stringify({
