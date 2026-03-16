@@ -111,8 +111,8 @@
       const picks = window.BracketEngine.getPicks();
       const pickCount = window.BracketEngine.getPickCount();
 
-      if (pickCount < 63) {
-        showMessage(`You've only made ${pickCount}/63 picks. Please complete your bracket before submitting.`, 'error');
+      if (pickCount < 62) {
+        showMessage(`You've only made ${pickCount}/62 picks. Please complete your bracket before submitting.`, 'error');
         return;
       }
 
@@ -121,7 +121,13 @@
         ? window.BracketEngine.getChampionshipScores()
         : { score1: 0, score2: 0 };
 
-      // Get champion from picks
+      // Validate championship scores (must predict a winner — no ties)
+      if (!scores.score1 || !scores.score2 || scores.score1 === scores.score2) {
+        showMessage('Please predict the championship final score (no ties allowed).', 'error');
+        return;
+      }
+
+      // Get champion from picks (determined by score)
       const champPick = picks['ff-champ'];
       const champion = champPick ? champPick.team : '';
 

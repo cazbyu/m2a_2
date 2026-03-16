@@ -10,7 +10,7 @@
   const state = {
     picks: {},   // gameId -> { team, seed }
     pickCount: 0,
-    totalPicks: 63 // 32+16+8+4+2+1 = 63
+    totalPicks: 62 // 32+16+8+4+2 = 62 (championship determined by score)
   };
 
   // ===== Initialization =====
@@ -21,8 +21,7 @@
     setupNavToggle();
     setupDonateButtons();
     setupScoreInputs();
-    loadFromLocalStorage();
-    loadScoresFromLocalStorage();
+    // Don't auto-load picks — users must login via "Load My Bracket" to see/edit
     updateChampionshipTeamNames();
     updateProgress();
   }
@@ -113,14 +112,15 @@
     const slot = e.target.closest('.team-slot');
     if (!slot || slot.classList.contains('empty') || !slot.dataset.team) return;
 
-    const slotId = slot.dataset.slot; // e.g. "east-r1-g1-top"
-    const parts = slotId.split('-');
-    const team = slot.dataset.team;
-    const seed = parseInt(slot.dataset.seed);
-
     // Determine the game this slot belongs to
     const matchup = slot.closest('.matchup');
     const gameId = matchup.dataset.game;
+
+    // Don't allow clicking on championship game — score determines winner
+    if (gameId === 'ff-champ') return;
+
+    const team = slot.dataset.team;
+    const seed = parseInt(slot.dataset.seed);
 
     // Mark selected in this matchup
     matchup.querySelectorAll('.team-slot').forEach(s => s.classList.remove('selected'));
@@ -161,6 +161,11 @@
         slotEl.classList.remove('empty');
         slotEl.classList.add('has-team');
       }
+      // When championship teams change, update names and re-check scores
+      if (nextGameId === 'ff-champ') {
+        updateChampionshipTeamNames();
+        determineChampionFromScore();
+      }
       return;
     }
 
@@ -188,13 +193,7 @@
     if (gameId === 'ff-semi1') return { nextGameId: 'ff-champ', position: 'top' };
     if (gameId === 'ff-semi2') return { nextGameId: 'ff-champ', position: 'bot' };
     if (gameId === 'ff-champ') {
-      // Update champion display
-      const pick = state.picks[gameId];
-      if (pick) {
-        document.getElementById('champion-name').textContent = pick.team;
-      }
-      // Save score predictions
-      saveScoresToLocalStorage();
+      // Championship is determined by score, not click
       return null;
     }
 
@@ -485,8 +484,62 @@
   function setupScoreInputs() {
     const s1 = document.getElementById('champ-score1');
     const s2 = document.getElementById('champ-score2');
-    if (s1) s1.addEventListener('input', saveScoresToLocalStorage);
-    if (s2) s2.addEventListener('input', saveScoresToLocalStorage);
+    if (s1) s1.addEventListener('input', () => { determineChampionFromScore(); saveScoresToLocalStorage(); });
+    if (s2) s2.addEventListener('input', () => { determineChampionFromScore(); saveScoresToLocalStorage(); });
+  }
+
+  // Determine champion based on score inputs
+  function determineChampionFromScore() {
+    const s1El = document.getElementById('champ-score1');
+    const s2El = document.getElementById('champ-score2');
+    const topSlot = document.querySelector('[data-slot="ff-champ-top"]');
+    const botSlot = document.querySelector('[data-slot="ff-champ-bot"]');
+    const champName = document.getElementById('champion-name');
+
+    if (!s1El || !s2El || !topSlot || !botSlot || !champName) return;
+
+    const score1 = parseInt(s1El.value) || 0;
+    const score2 = parseInt(s2El.value) || 0;
+    const team1 = topSlot.dataset.team;
+    const team2 = botSlot.dataset.team;
+
+    // Need both teams in the championship and at least one score entered
+    if (!team1 || !team2) {
+      champName.textContent = '?';
+      delete state.picks['ff-champ'];
+      return;
+    }
+
+    if (score1 === 0 && score2 === 0) {
+      champName.textContent = '?';
+      delete state.picks['ff-champ'];
+      updateProgress();
+      saveToLocalStorage();
+      return;
+    }
+
+    // Higher score wins
+    if (score1 > score2) {
+      state.picks['ff-champ'] = { team: team1, seed: parseInt(topSlot.dataset.seed) || 0 };
+      champName.textContent = team1;
+      // Highlight winning slot
+      topSlot.classList.add('selected');
+      botSlot.classList.remove('selected');
+    } else if (score2 > score1) {
+      state.picks['ff-champ'] = { team: team2, seed: parseInt(botSlot.dataset.seed) || 0 };
+      champName.textContent = team2;
+      botSlot.classList.add('selected');
+      topSlot.classList.remove('selected');
+    } else {
+      // Tied — no champion yet
+      champName.textContent = '?';
+      delete state.picks['ff-champ'];
+      topSlot.classList.remove('selected');
+      botSlot.classList.remove('selected');
+    }
+
+    updateProgress();
+    saveToLocalStorage();
   }
 
   // ===== Public API =====
@@ -537,7 +590,9 @@
       advanceTeam(gameId, pick.team, pick.seed);
     });
 
-    updatePickCount();
+    updateProgress();
+    updateChampionshipTeamNames();
+    determineChampionFromScore();
     saveToLocalStorage();
   }
 
