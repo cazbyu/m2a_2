@@ -94,7 +94,7 @@
       business: 'TBD',
       country: 'Kenya',
       description: 'Details coming soon.',
-      photo: '',
+      photo: 'assets/Jibril.png',
       businessPlan: ''
     },
     {
@@ -103,7 +103,7 @@
       business: 'Inspire Hands Creation Enterprise',
       country: 'Kenya',
       description: 'Esther creates handmade crafts and products in Kenya, turning local materials into beautiful goods that support her family and inspire her community.',
-      photo: '',
+      photo: 'assets/esther jewelry.jpeg',
       businessPlan: ''
     },
     {
@@ -112,7 +112,7 @@
       business: 'TBD',
       country: 'Zimbabwe',
       description: 'Details coming soon.',
-      photo: '',
+      photo: 'assets/Lisa.jpg',
       businessPlan: ''
     }
   ];
