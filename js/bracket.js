@@ -20,7 +20,10 @@
     setupRegionTabs();
     setupNavToggle();
     setupDonateButtons();
+    setupScoreInputs();
     loadFromLocalStorage();
+    loadScoresFromLocalStorage();
+    updateChampionshipTeamNames();
     updateProgress();
   }
 
@@ -135,6 +138,7 @@
     // Advance team to next round
     advanceTeam(gameId, team, seed);
 
+    updateChampionshipTeamNames();
     updateProgress();
     saveToLocalStorage();
   }
@@ -189,6 +193,8 @@
       if (pick) {
         document.getElementById('champion-name').textContent = pick.team;
       }
+      // Save score predictions
+      saveScoresToLocalStorage();
       return null;
     }
 
@@ -395,8 +401,30 @@
           return;
         }
 
-        // For now, show a message. Stripe integration will replace this.
-        showToast(`Stripe checkout for $${amount} coming soon!`);
+        // Call Netlify serverless function to create Stripe Checkout session
+        donateBtn.disabled = true;
+        donateBtn.textContent = 'Redirecting...';
+
+        fetch('/.netlify/functions/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount })
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.url) {
+              window.location.href = data.url;
+            } else {
+              showToast(data.error || 'Unable to start checkout. Please try again.');
+              donateBtn.disabled = false;
+              donateBtn.textContent = 'Donate Now';
+            }
+          })
+          .catch(() => {
+            showToast('Unable to connect to payment server. Please try again.');
+            donateBtn.disabled = false;
+            donateBtn.textContent = 'Donate Now';
+          });
       });
     }
   }
@@ -411,6 +439,56 @@
     setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
+  // ===== Championship Score Prediction =====
+
+  function updateChampionshipTeamNames() {
+    const topSlot = document.querySelector('[data-slot="ff-champ-top"]');
+    const botSlot = document.querySelector('[data-slot="ff-champ-bot"]');
+    const name1 = document.getElementById('champ-team1-name');
+    const name2 = document.getElementById('champ-team2-name');
+    if (name1 && topSlot && topSlot.dataset.team) {
+      name1.textContent = topSlot.dataset.team;
+    } else if (name1) {
+      name1.textContent = 'Team 1';
+    }
+    if (name2 && botSlot && botSlot.dataset.team) {
+      name2.textContent = botSlot.dataset.team;
+    } else if (name2) {
+      name2.textContent = 'Team 2';
+    }
+  }
+
+  function saveScoresToLocalStorage() {
+    try {
+      const s1 = document.getElementById('champ-score1');
+      const s2 = document.getElementById('champ-score2');
+      if (s1 && s2) {
+        localStorage.setItem('m2a_champ_scores', JSON.stringify({
+          score1: s1.value, score2: s2.value
+        }));
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  function loadScoresFromLocalStorage() {
+    try {
+      const saved = localStorage.getItem('m2a_champ_scores');
+      if (!saved) return;
+      const { score1, score2 } = JSON.parse(saved);
+      const s1 = document.getElementById('champ-score1');
+      const s2 = document.getElementById('champ-score2');
+      if (s1 && score1) s1.value = score1;
+      if (s2 && score2) s2.value = score2;
+    } catch (e) { /* ignore */ }
+  }
+
+  function setupScoreInputs() {
+    const s1 = document.getElementById('champ-score1');
+    const s2 = document.getElementById('champ-score2');
+    if (s1) s1.addEventListener('input', saveScoresToLocalStorage);
+    if (s2) s2.addEventListener('input', saveScoresToLocalStorage);
+  }
+
   // ===== Public API =====
 
   window.BracketEngine = {
@@ -418,6 +496,14 @@
     getPickCount: () => state.pickCount,
     getTotalPicks: () => state.totalPicks,
     isComplete: () => state.pickCount >= state.totalPicks,
+    getChampionshipScores: () => {
+      const s1 = document.getElementById('champ-score1');
+      const s2 = document.getElementById('champ-score2');
+      return {
+        score1: s1 ? parseInt(s1.value) || 0 : 0,
+        score2: s2 ? parseInt(s2.value) || 0 : 0
+      };
+    },
     showToast
   };
 

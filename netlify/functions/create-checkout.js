@@ -12,8 +12,12 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { amount = 1500 } = JSON.parse(event.body || '{}');
+    const { amount = 1500, description } = JSON.parse(event.body || '{}');
     const amountCents = Math.max(100, Math.round(amount * 100)); // min $1
+    const productName = description || 'March -2- Africa Bracket Challenge Donation';
+    const productDesc = description
+      ? 'Sandy Rotary Club fundraiser \u2013 Entrepreneur microloan funding'
+      : 'Sandy Rotary Club fundraiser supporting African entrepreneurs';
 
     const origin = event.headers.origin || event.headers.referer || 'https://march2africa.netlify.app';
 
@@ -26,8 +30,8 @@ exports.handler = async (event) => {
       body: new URLSearchParams({
         'mode': 'payment',
         'line_items[0][price_data][currency]': 'usd',
-        'line_items[0][price_data][product_data][name]': 'March -2- Africa Bracket Challenge Donation',
-        'line_items[0][price_data][product_data][description]': 'Sandy Rotary Club fundraiser supporting African entrepreneurs',
+        'line_items[0][price_data][product_data][name]': productName,
+        'line_items[0][price_data][product_data][description]': productDesc,
         'line_items[0][price_data][unit_amount]': amountCents.toString(),
         'line_items[0][quantity]': '1',
         'success_url': `${origin}?donation=success`,

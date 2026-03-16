@@ -16,7 +16,7 @@
     <div class="nav-brand">Sandy Rotary Club</div>
     <div class="nav-links">
       <a href="#bracket">Bracket</a>
-      <a href="#entrepreneurs">Entrepreneurs</a>
+      <a href="#entrepreneurs">Entrepreneur Competition</a>
       <a href="#donate" class="nav-donate">Donate</a>
     </div>
     <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
@@ -34,6 +34,7 @@
         <p class="hero-desc">Fill out your NCAA bracket, support African entrepreneurs, and help the Sandy Rotary Club make a difference. Every bracket counts!</p>
         <div class="hero-actions">
           <a href="#bracket" class="btn btn-primary">Fill Out Your Bracket</a>
+          <a href="#entrepreneurs" class="btn btn-entrepreneur">Support an Entrepreneur</a>
           <a href="#donate" class="btn btn-secondary">Donate $15</a>
         </div>
       </div>
@@ -107,6 +108,20 @@
             <div class="matchup championship-matchup" data-game="ff-champ">
               <div class="team-slot" data-slot="ff-champ-top"><span class="seed"></span><span class="name">Semifinal 1 Winner</span></div>
               <div class="team-slot" data-slot="ff-champ-bot"><span class="seed"></span><span class="name">Semifinal 2 Winner</span></div>
+            </div>
+            <div class="championship-score">
+              <label class="score-label">Predict the Final Score</label>
+              <div class="score-inputs">
+                <div class="score-team">
+                  <span class="score-team-name" id="champ-team1-name">Team 1</span>
+                  <input type="number" id="champ-score1" class="score-input" min="0" max="200" placeholder="0">
+                </div>
+                <span class="score-dash">&ndash;</span>
+                <div class="score-team">
+                  <span class="score-team-name" id="champ-team2-name">Team 2</span>
+                  <input type="number" id="champ-score2" class="score-input" min="0" max="200" placeholder="0">
+                </div>
+              </div>
             </div>
             <div class="champion-display" id="champion-display">
               <div class="champion-label">Champion</div>
@@ -186,7 +201,11 @@
   <!-- Entrepreneur Bracket Section -->
   <section class="entrepreneurs-section" id="entrepreneurs">
     <h2>Entrepreneur Bracket Challenge</h2>
-    <p class="section-desc">8 African entrepreneurs compete for sponsorship funding. Your donation is your vote &mdash; the entrepreneur with the most funding advances each week!</p>
+    <p class="section-desc">9 African entrepreneurs compete for sponsorship funding. Your donation is your vote &mdash; the entrepreneur with the most funding advances each week!</p>
+    <div class="ent-microloan-info">
+      <div class="microloan-icon">&#127758;</div>
+      <p>Each entrepreneur will receive a <strong>0% interest microloan</strong> to start or grow their business. Select the entrepreneurs you believe are best qualified for funding &mdash; you can support multiple entrepreneurs across different matchups. Your donations go directly toward their microloans!</p>
+    </div>
 
     <div class="ent-schedule">
       <div class="ent-week" data-week="1">
@@ -216,7 +235,7 @@
         <div class="prize-card">
           <div class="prize-icon">&#127942;</div>
           <h4>Winning Entrepreneur</h4>
-          <p>Receives full sponsorship funding from all donations collected during the bracket challenge.</p>
+          <p>Receives full sponsorship funding as a 0% interest microloan to start or grow their business.</p>
         </div>
         <div class="prize-card">
           <div class="prize-icon">&#11088;</div>
