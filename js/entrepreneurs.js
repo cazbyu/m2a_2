@@ -537,6 +537,14 @@
               var e = getEnt(eid);
               if (e) entNames[eid] = e.name;
             });
+            // Grab contributor info from bracket form (if filled in)
+            var emailEl = document.getElementById('email');
+            var fnEl = document.getElementById('first-name');
+            var lnEl = document.getElementById('last-name');
+            var contributorEmail = emailEl ? emailEl.value.trim() : '';
+            var contributorFirst = fnEl ? fnEl.value.trim() : '';
+            var contributorLast = lnEl ? lnEl.value.trim() : '';
+
             localStorage.setItem('m2a_ent_cart', JSON.stringify(cart));
             localStorage.setItem('m2a_pending_donation', JSON.stringify({
               type: 'boost',
@@ -544,6 +552,9 @@
               cart: Object.assign({}, cart),
               entNames: entNames,
               allocations: allocations,
+              email: contributorEmail,
+              firstName: contributorFirst,
+              lastName: contributorLast,
               rotaryClub: rotaryClub || '',
               timestamp: Date.now()
             }));
