@@ -225,7 +225,7 @@
 
     // Business plan link
     var planHtml = ent.businessPlan
-      ? '<a href="' + ent.businessPlan + '" target="_blank" class="ent-card-plan-link">View Business Plan &#8599;</a>'
+      ? '<a href="' + ent.businessPlan + '" target="_blank" rel="noopener noreferrer" class="ent-card-plan-link">View Business Plan &#8599;</a>'
       : '';
 
     // Cart controls or boost button
@@ -547,7 +547,7 @@
     var flagSrc = (typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[ent.country]) || '';
 
     var planLink = ent.businessPlan
-      ? '<a href="' + ent.businessPlan + '" target="_blank" class="ent-popup-plan-link">View Full Business Plan &#8599;</a>'
+      ? '<a href="' + ent.businessPlan + '" target="_blank" rel="noopener noreferrer" class="ent-popup-plan-link">View Full Business Plan &#8599;</a>'
       : '';
 
     overlay.innerHTML =

@@ -21,6 +21,12 @@
     return SUPABASE_URL.includes('YOUR_PROJECT');
   }
 
+  // HTML-escape user-submitted strings to prevent XSS
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   // ===== Scoring System =====
   // Points per correct pick in each round
   const POINTS_PER_ROUND = {
@@ -626,8 +632,8 @@
     overlay.style.display = 'flex';
 
     const entListHtml = entrepreneurs.map(e =>
-      '<button class="donation-boost-ent-btn" data-uuid="' + e.uuid + '" data-name="' + e.name + '">' +
-        e.name +
+      '<button class="donation-boost-ent-btn" data-uuid="' + esc(e.uuid) + '" data-name="' + esc(e.name) + '">' +
+        esc(e.name) +
       '</button>'
     ).join('');
 

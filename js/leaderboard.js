@@ -10,6 +10,12 @@
 
   const VIEW_LEADERBOARD = '0013_m2a_leaderboard';
 
+  // HTML-escape user-submitted strings to prevent XSS
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   function supabaseRequest(table, method, body, query) {
     const url = `${SUPABASE_URL}/rest/v1/${table}${query || ''}`;
     const headers = {
@@ -53,9 +59,9 @@
         return `
           <tr class="${rank <= 3 ? 'leaderboard-top' : ''}">
             <td class="lb-rank">${medal}</td>
-            <td class="lb-name">${row.first_name} ${row.last_name.charAt(0)}.</td>
-            <td class="lb-bracket-name">${bracketName || '—'}</td>
-            <td class="lb-champion">${row.champion || '—'}</td>
+            <td class="lb-name">${esc(row.first_name)} ${esc(row.last_name).charAt(0)}.</td>
+            <td class="lb-bracket-name">${esc(bracketName) || '—'}</td>
+            <td class="lb-champion">${esc(row.champion) || '—'}</td>
             <td class="lb-score">${row.total_score || 0}</td>
             <td class="lb-tiebreaker">${tiebreaker || '—'}</td>
           </tr>

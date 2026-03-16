@@ -11,12 +11,14 @@
   const TABLE_RESULTS = '0013_m2a_results';
   const VIEW_LEADERBOARD = '0013_m2a_leaderboard';
 
-  // Admin credential hash (SHA-256)
-  const ADMIN_EMAIL = 'cazbyu@gmail.com';
-  const ADMIN_HASH = 'fec501d608928f3b03f26155b5bff5da8ed7167b2b2c01d13d5d6138325c4404';
-
   // Scoring points per round
   const POINTS_PER_ROUND = { 1: 5, 2: 10, 3: 20, 4: 40, 5: 80, 6: 160 };
+
+  // HTML-escape user-submitted strings to prevent XSS
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
   // Current saved results (fetched from Supabase)
   let savedResults = {};
@@ -56,6 +58,7 @@
     const email = document.getElementById('login-email').value.trim().toLowerCase();
     const password = document.getElementById('login-password').value;
     const errorEl = document.getElementById('login-error');
+    const loginBtn = document.getElementById('login-btn');
 
     if (!email || !password) {
       errorEl.style.display = 'block';
@@ -63,14 +66,35 @@
       return;
     }
 
-    const pwHash = await hashString(password);
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Verifying...';
 
-    if (email === ADMIN_EMAIL && pwHash === ADMIN_HASH) {
-      sessionStorage.setItem('m2a_admin', 'true');
-      showDashboard();
-    } else {
+    try {
+      const pwHash = await hashString(password);
+
+      const res = await fetch('/.netlify/functions/admin-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, passwordHash: pwHash })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        sessionStorage.setItem('m2a_admin', 'true');
+        sessionStorage.setItem('m2a_admin_token', data.token);
+        sessionStorage.setItem('m2a_admin_expiry', data.expiry);
+        showDashboard();
+      } else {
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Invalid email or password.';
+      }
+    } catch (err) {
       errorEl.style.display = 'block';
-      errorEl.textContent = 'Invalid email or password.';
+      errorEl.textContent = 'Unable to verify. Please try again.';
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Sign In';
     }
   }
 
@@ -476,9 +500,9 @@
         return `
           <tr>
             <td>${rank}</td>
-            <td>${row.first_name} ${row.last_name}</td>
-            <td>${row.email || '—'}</td>
-            <td>${row.champion || '—'}</td>
+            <td>${esc(row.first_name)} ${esc(row.last_name)}</td>
+            <td>${esc(row.email) || '—'}</td>
+            <td>${esc(row.champion) || '—'}</td>
             <td><strong>${row.total_score || 0}</strong></td>
             <td>${tiebreaker || '—'}</td>
           </tr>
@@ -515,9 +539,9 @@
         const date = row.created_at ? new Date(row.created_at).toLocaleDateString() : '—';
         return `
           <tr>
-            <td>${row.first_name} ${row.last_name}</td>
-            <td>${row.email}</td>
-            <td>${row.champion || '—'}</td>
+            <td>${esc(row.first_name)} ${esc(row.last_name)}</td>
+            <td>${esc(row.email)}</td>
+            <td>${esc(row.champion) || '—'}</td>
             <td><strong>${row.total_score || 0}</strong></td>
             <td>${date}</td>
           </tr>
@@ -544,9 +568,15 @@
   // ===== Event Listeners =====
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Check if already logged in this session
-    if (sessionStorage.getItem('m2a_admin') === 'true') {
+    // Check if already logged in this session (with valid token)
+    const expiry = parseInt(sessionStorage.getItem('m2a_admin_expiry') || '0');
+    if (sessionStorage.getItem('m2a_admin') === 'true' && expiry > Date.now()) {
       showDashboard();
+    } else {
+      // Clear stale session
+      sessionStorage.removeItem('m2a_admin');
+      sessionStorage.removeItem('m2a_admin_token');
+      sessionStorage.removeItem('m2a_admin_expiry');
     }
 
     // Login
