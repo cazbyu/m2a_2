@@ -15,9 +15,7 @@ exports.handler = async (event) => {
     const { amount = 1500, description } = JSON.parse(event.body || '{}');
     const amountCents = Math.max(100, Math.round(amount * 100)); // min $1
     const productName = description || 'March -2- Africa Bracket Challenge Donation';
-    const productDesc = description
-      ? 'Sandy Rotary Club fundraiser \u2013 Entrepreneur microloan funding'
-      : 'Sandy Rotary Club fundraiser supporting African entrepreneurs';
+    const productDesc = 'Thanks for helping Rotary make the world a better place';
 
     const origin = event.headers.origin || event.headers.referer || 'https://march2africa.netlify.app';
 
