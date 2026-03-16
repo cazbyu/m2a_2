@@ -1628,24 +1628,87 @@ body {
   font-weight: 700;
   flex-shrink: 0;
 }
-/* Champion suggestion banner in cart */
-.ent-cart-suggestion {
-  background: linear-gradient(135deg, #2D5016 0%, #3d6b20 100%);
-  color: #fff;
+/* Donation amount section in cart */
+.cart-donation-section {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e0d4;
+}
+.cart-donation-label {
   font-size: 0.75rem;
-  padding: 8px 12px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+.cart-donation-amounts {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.cart-amt-btn {
+  background: #fff;
+  border: 1.5px solid var(--color-border);
   border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--color-text);
+}
+.cart-amt-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-selected-bg);
+}
+.cart-amt-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+.cart-custom-amount {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+.cart-custom-amount input {
+  width: 50px;
+  padding: 4px 6px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  text-align: center;
+}
+.cart-custom-amount input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+.cart-donation-msg {
+  font-size: 0.7rem;
+  color: var(--color-text-light);
+  margin-top: 6px;
+  font-style: italic;
+}
+/* Boost section in cart */
+.cart-boost-section {
   margin-bottom: 8px;
-  line-height: 1.4;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e0d4;
 }
-.ent-cart-suggestion strong {
-  color: var(--color-primary);
+.cart-boost-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 6px;
 }
-.ent-cart-suggestion-flag {
-  height: 14px;
-  width: auto;
-  vertical-align: middle;
-  margin-right: 4px;
+.cart-boost-empty {
+  padding: 4px 0;
+}
+.cart-boost-empty .ent-cart-browse-link {
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 /* Browse link in cart */
 .ent-cart-browse-link {

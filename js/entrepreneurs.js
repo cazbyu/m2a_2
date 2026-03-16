@@ -138,8 +138,10 @@
   }
 
   // ===== Cart State =====
-  var cart = {};
+  var cart = {};           // entrepreneur boosts: { entId: amount }
+  var donationAmount = 15; // general donation amount (default $15)
   var rotaryClub = '';
+  var cartVisible = false; // tracks if cart has been opened
 
   var container = document.getElementById('ent-bracket');
   if (!container) return;
@@ -149,8 +151,12 @@
     return ENTREPRENEURS.find(function (e) { return e.id === id; });
   }
 
-  function getCartTotal() {
+  function getBoostTotal() {
     return Object.values(cart).reduce(function (sum, amt) { return sum + (amt || 0); }, 0);
+  }
+
+  function getCartTotal() {
+    return donationAmount + getBoostTotal();
   }
 
   function getCartCount() {
@@ -271,10 +277,11 @@
   // ===== Floating Cart =====
   function renderCart() {
     var cartEl = document.getElementById('ent-cart-floating');
-    var count = getCartCount();
+    var boostCount = getCartCount();
     var total = getCartTotal();
 
-    if (count === 0) {
+    // Only show cart if it's been opened (via Donate or adding a boost)
+    if (!cartVisible && boostCount === 0) {
       if (cartEl) cartEl.remove();
       return;
     }
@@ -286,6 +293,26 @@
       document.body.appendChild(cartEl);
     }
 
+    // Donation amount selector with quick buttons
+    var amountBtns = [10, 15, 25, 50].map(function (amt) {
+      var active = donationAmount === amt ? ' active' : '';
+      return '<button class="cart-amt-btn' + active + '" data-cart-amount="' + amt + '">$' + amt + '</button>';
+    }).join('');
+
+    var donationRow =
+      '<div class="cart-donation-section">' +
+        '<div class="cart-donation-label">Donation Amount</div>' +
+        '<div class="cart-donation-amounts">' +
+          amountBtns +
+          '<div class="cart-custom-amount">' +
+            '<span>$</span><input type="number" id="cart-custom-amount" min="0" placeholder="Other" value="' +
+              ([10, 15, 25, 50].indexOf(donationAmount) === -1 && donationAmount > 0 ? donationAmount : '') + '">' +
+          '</div>' +
+        '</div>' +
+        '<div class="cart-donation-msg">&#127758; Your donation supports all the entrepreneurs!</div>' +
+      '</div>';
+
+    // Entrepreneur boost items
     var cartItems = Object.entries(cart)
       .filter(function (pair) { return pair[1] > 0; })
       .map(function (pair) {
@@ -311,40 +338,33 @@
         '</div>';
       }).join('');
 
-    // Champion suggestion banner — always show context about who they're helping
-    var suggestionHtml = '';
-    var suggestion = getChampionSuggestion();
-    if (suggestion) {
-      var flagSrc = (typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[suggestion.country]) || '';
-      var flagImg = flagSrc ? '<img src="' + flagSrc + '" alt="' + suggestion.country + '" class="ent-cart-suggestion-flag">' : '';
-      var alreadyInCart = cart[suggestion.entId] && cart[suggestion.entId] > 0;
-      if (alreadyInCart) {
-        suggestionHtml = '<div class="ent-cart-suggestion">' +
-          flagImg + ' Your donation boosts <strong>' + suggestion.name + '</strong> from ' + suggestion.country +
-          ' <a href="#entrepreneurs" class="ent-cart-change-link">Change</a>' +
+    // Boost section (only show header if there are boosts or to encourage adding)
+    var boostSection = '';
+    if (boostCount > 0) {
+      boostSection =
+        '<div class="cart-boost-section">' +
+          '<div class="cart-boost-label">&#128640; Entrepreneur Boosts</div>' +
+          cartItems +
+          '<a href="#entrepreneurs" class="ent-cart-browse-link">+ Boost another entrepreneur</a>' +
         '</div>';
-      } else {
-        suggestionHtml = '<div class="ent-cart-suggestion">' +
-          flagImg + ' Your bracket champion <strong>' + suggestion.team + '</strong> helps <strong>' + suggestion.name + '</strong> from ' + suggestion.country +
-          ' &mdash; <button class="ent-cart-add-suggestion" data-ent-id="' + suggestion.entId + '">Add Boost</button>' +
-        '</div>';
-      }
     } else {
-      suggestionHtml = '<div class="ent-cart-suggestion ent-cart-suggestion-all">' +
-        '&#127758; You are helping all the entrepreneurs! <a href="#entrepreneurs" class="ent-cart-change-link">Browse &amp; choose</a>' +
-      '</div>';
+      boostSection =
+        '<div class="cart-boost-section cart-boost-empty">' +
+          '<a href="#entrepreneurs" class="ent-cart-browse-link">&#128640; Boost a specific entrepreneur (optional)</a>' +
+        '</div>';
     }
+
+    var headerLabel = total > 0 ? ('$' + total) : 'Donate';
 
     cartEl.innerHTML =
       '<div class="ent-cart-header" id="ent-cart-toggle">' +
-        '<span>&#128640; My Boosts</span>' +
-        '<span class="ent-cart-badge-count">' + count + ' selected &bull; $' + total + '</span>' +
+        '<span>&#10084;&#65039; My Donation</span>' +
+        '<span class="ent-cart-badge-count">' + headerLabel + '</span>' +
         '<span class="ent-cart-toggle-icon">&#9660;</span>' +
       '</div>' +
       '<div class="ent-cart-body" id="ent-cart-body">' +
-        suggestionHtml +
-        cartItems +
-        '<a href="#entrepreneurs" class="ent-cart-browse-link">+ Add more entrepreneurs</a>' +
+        donationRow +
+        boostSection +
         '<div class="ent-cart-donor-info">' +
           '<label for="cart-donor-name" class="ent-cart-rotary-label">Your Name</label>' +
           '<input type="text" id="cart-donor-name" class="ent-cart-rotary-input" placeholder="First Last">' +
@@ -352,11 +372,11 @@
           '<input type="email" id="cart-donor-email" class="ent-cart-rotary-input" placeholder="your@email.com">' +
         '</div>' +
         '<div class="ent-cart-rotary">' +
-          '<label for="rotary-club-input" class="ent-cart-rotary-label">What Rotary Club are you with?</label>' +
+          '<label for="rotary-club-input" class="ent-cart-rotary-label">Rotary Club (optional)</label>' +
           '<input type="text" id="rotary-club-input" class="ent-cart-rotary-input" placeholder="e.g. Sandy Rotary Club" value="' + (rotaryClub || '').replace(/"/g, '&quot;') + '">' +
         '</div>' +
         '<div class="ent-cart-total"><strong>Total: $' + total + '</strong></div>' +
-        '<button class="btn btn-primary ent-cart-checkout" id="ent-cart-checkout">&#128640; Boost Now ($' + total + ')</button>' +
+        '<button class="btn btn-primary ent-cart-checkout" id="ent-cart-checkout">&#10084;&#65039; Donate Now ($' + total + ')</button>' +
         '<div class="ent-cart-note">No donation is required to play the bracket challenge</div>' +
       '</div>';
 
@@ -368,6 +388,30 @@
       var icon = cartEl.querySelector('.ent-cart-toggle-icon');
       icon.textContent = body.classList.contains('open') ? '\u25B2' : '\u25BC';
     });
+
+    // Donation amount buttons
+    cartEl.querySelectorAll('.cart-amt-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        donationAmount = parseInt(btn.dataset.cartAmount);
+        var customInput = cartEl.querySelector('#cart-custom-amount');
+        if (customInput) customInput.value = '';
+        updateCartTotals();
+        // Update active state
+        cartEl.querySelectorAll('.cart-amt-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+    });
+
+    // Custom amount input
+    var customAmountInput = cartEl.querySelector('#cart-custom-amount');
+    if (customAmountInput) {
+      customAmountInput.addEventListener('input', function () {
+        var val = parseInt(customAmountInput.value) || 0;
+        donationAmount = Math.max(0, val);
+        cartEl.querySelectorAll('.cart-amt-btn').forEach(function (b) { b.classList.remove('active'); });
+        updateCartTotals();
+      });
+    }
 
     // Pre-fill donor name/email from bracket form if available
     var donorNameInput = cartEl.querySelector('#cart-donor-name');
@@ -384,7 +428,7 @@
       if (existingEmail) donorEmailInput.value = existingEmail;
     }
 
-    // Rotary Club input — sync value on typing
+    // Rotary Club input
     var clubInput = cartEl.querySelector('#rotary-club-input');
     if (clubInput) {
       clubInput.addEventListener('input', function () {
@@ -392,19 +436,22 @@
       });
     }
 
-    // Add suggestion button (if bracket champion not yet in cart)
-    var addSuggBtn = cartEl.querySelector('.ent-cart-add-suggestion');
-    if (addSuggBtn) {
-      addSuggBtn.addEventListener('click', function () {
-        var entId = addSuggBtn.dataset.entId;
-        cart[entId] = (cart[entId] || 0) + 5;
-        renderCards();
-      });
-    }
-
     // Checkout button
     var checkoutBtn = cartEl.querySelector('#ent-cart-checkout');
     checkoutBtn.addEventListener('click', handleCheckout);
+  }
+
+  // Lightweight total update (no full re-render, keeps cart open)
+  function updateCartTotals() {
+    var cartEl = document.getElementById('ent-cart-floating');
+    if (!cartEl) return;
+    var total = getCartTotal();
+    var badge = cartEl.querySelector('.ent-cart-badge-count');
+    if (badge) badge.textContent = '$' + total;
+    var totalEl = cartEl.querySelector('.ent-cart-total strong');
+    if (totalEl) totalEl.textContent = 'Total: $' + total;
+    var checkoutBtn = cartEl.querySelector('.ent-cart-checkout');
+    if (checkoutBtn) checkoutBtn.textContent = '\u2764\uFE0F Donate Now ($' + total + ')';
   }
 
   // ===== Cart Actions =====
@@ -456,7 +503,6 @@
     var cartEl = document.getElementById('ent-cart-floating');
     if (!cartEl) return;
 
-    // Update individual item amounts
     cartEl.querySelectorAll('.ent-cart-item-controls').forEach(function (ctrl) {
       var minusBtn = ctrl.querySelector('[data-action="minus"]');
       if (!minusBtn) return;
@@ -467,17 +513,7 @@
       }
     });
 
-    // Update totals
-    var total = getCartTotal();
-    var count = getCartCount();
-    var badge = cartEl.querySelector('.ent-cart-badge-count');
-    if (badge) badge.textContent = count + ' selected \u2022 $' + total;
-
-    var totalEl = cartEl.querySelector('.ent-cart-total strong');
-    if (totalEl) totalEl.textContent = 'Total: $' + total;
-
-    var checkoutBtn = cartEl.querySelector('.ent-cart-checkout');
-    if (checkoutBtn) checkoutBtn.textContent = '\u{1F680} Boost Now ($' + total + ')';
+    updateCartTotals();
   }
 
   // ===== Entrepreneur Preview Popup =====
@@ -544,7 +580,10 @@
   // ===== Checkout =====
   function handleCheckout() {
     var total = getCartTotal();
-    if (total < 1) return;
+    if (total < 1) {
+      if (window.BracketEngine) window.BracketEngine.showToast('Please select a donation amount');
+      return;
+    }
 
     var checkoutBtn = document.getElementById('ent-cart-checkout');
     if (checkoutBtn) {
@@ -553,7 +592,7 @@
     }
 
     // Build metadata for tracking
-    var allocations = Object.entries(cart)
+    var boostAllocations = Object.entries(cart)
       .filter(function (pair) { return pair[1] > 0; })
       .map(function (pair) {
         var ent = getEnt(pair[0]);
@@ -561,12 +600,18 @@
       })
       .join(', ');
 
+    var descParts = [];
+    if (donationAmount > 0) descParts.push('Donation: $' + donationAmount);
+    if (boostAllocations) descParts.push('Boosts: ' + boostAllocations);
+    if (rotaryClub) descParts.push('Club: ' + rotaryClub);
+    var description = descParts.join(' | ') || 'March -2- Africa Donation';
+
     fetch('/.netlify/functions/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         amount: total,
-        description: 'Entrepreneur Boost: ' + allocations + (rotaryClub ? ' | Club: ' + rotaryClub : '')
+        description: description
       })
     })
       .then(function (res) { return res.json(); })
@@ -599,9 +644,10 @@
             localStorage.setItem('m2a_pending_donation', JSON.stringify({
               type: 'boost',
               amount: total,
+              donationAmount: donationAmount,
               cart: Object.assign({}, cart),
               entNames: entNames,
-              allocations: allocations,
+              allocations: boostAllocations,
               email: contributorEmail,
               firstName: contributorFirst,
               lastName: contributorLast,
@@ -689,10 +735,25 @@
   window.EntrepreneurBoost = {
     addToCart: function (entId, amount) {
       cart[entId] = (cart[entId] || 0) + amount;
+      cartVisible = true;
       renderCards();
+    },
+    showDonateCart: function (amount) {
+      // Show the cart with a donation amount pre-selected
+      if (amount) donationAmount = amount;
+      cartVisible = true;
+      renderCards();
+      // Open it
+      this.openCart();
     },
     openCart: function () {
       var cartEl = document.getElementById('ent-cart-floating');
+      if (!cartEl) {
+        // Cart not rendered yet — make it visible and render
+        cartVisible = true;
+        renderCards();
+        cartEl = document.getElementById('ent-cart-floating');
+      }
       if (cartEl) {
         var body = cartEl.querySelector('#ent-cart-body');
         if (body && !body.classList.contains('open')) {
@@ -708,7 +769,8 @@
     },
     getChampionSuggestion: getChampionSuggestion,
     getCart: function () { return cart; },
-    getCartTotal: getCartTotal
+    getCartTotal: getCartTotal,
+    getDonationAmount: function () { return donationAmount; }
   };
 
   // ===== Hero Spotlight Rotator =====

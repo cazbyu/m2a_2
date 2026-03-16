@@ -456,51 +456,22 @@
           return;
         }
 
-        // Add donation to entrepreneur boost cart instead of going directly to Stripe
+        // Open the donation cart with the selected amount
         if (window.EntrepreneurBoost) {
-          // Check if bracket has a champion pick — auto-suggest that entrepreneur
-          const suggestion = window.EntrepreneurBoost.getChampionSuggestion();
-          if (suggestion) {
-            window.EntrepreneurBoost.addToCart(suggestion.entId, amount);
-            showToast('$' + amount + ' boost added for ' + suggestion.name + '!');
-          } else {
-            // No champion yet — scroll to entrepreneurs so user can pick
-            showToast('Choose an entrepreneur to boost with your $' + amount + ' donation!');
-          }
-
-          // Scroll to entrepreneurs section and open cart
-          document.getElementById('entrepreneurs').scrollIntoView({ behavior: 'smooth' });
-          setTimeout(function () {
-            window.EntrepreneurBoost.openCart();
-          }, 500);
+          window.EntrepreneurBoost.showDonateCart(amount);
         } else {
           showToast('Please try again in a moment.');
         }
       });
     }
 
-    // Nav Donate link — scroll to entrepreneurs and open cart
+    // Nav Donate link — open the donation cart immediately
     const navDonateLink = document.getElementById('nav-donate-link');
     if (navDonateLink) {
       navDonateLink.addEventListener('click', (e) => {
         e.preventDefault();
-        document.getElementById('entrepreneurs').scrollIntoView({ behavior: 'smooth' });
         if (window.EntrepreneurBoost) {
-          // If nothing in cart yet, auto-add champion suggestion or prompt to browse
-          const cart = window.EntrepreneurBoost.getCart();
-          const cartCount = Object.values(cart).filter(a => a > 0).length;
-          if (cartCount === 0) {
-            const suggestion = window.EntrepreneurBoost.getChampionSuggestion();
-            if (suggestion) {
-              window.EntrepreneurBoost.addToCart(suggestion.entId, 15);
-              showToast('$15 boost added for ' + suggestion.name + '! Review below.');
-            } else {
-              showToast('Choose an entrepreneur to boost!');
-            }
-          }
-          setTimeout(function () {
-            window.EntrepreneurBoost.openCart();
-          }, 500);
+          window.EntrepreneurBoost.showDonateCart(15);
         }
       });
     }
