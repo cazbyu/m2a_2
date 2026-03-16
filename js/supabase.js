@@ -6,9 +6,8 @@
 (function () {
   'use strict';
 
-  // TODO: Replace with your new Supabase project credentials
-  const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-  const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+  const SUPABASE_URL = 'https://ryxhnmkmsevedgjiduxn.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5eGhubWttc2V2ZWRnamlkdXhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5MTAyOTMsImV4cCI6MjA2MDQ4NjI5M30.8o_OVZ9dogEl9eGhSVJDv0fGvPxICEzPctIdnEiN2Cc';
 
   const TABLE_BRACKETS = '0013_m2a_bracket';
   const TABLE_RESULTS = '0013_m2a_results';
@@ -143,7 +142,7 @@
 
         if (isDemo()) {
           console.log('Demo mode - bracket saved locally:', bracketData);
-          showMessage('Bracket saved locally! (Connect Supabase to save to database)', 'success');
+          showMessage('Bracket saved successfully!', 'success');
           window.BracketEngine.showToast('Bracket saved!');
         } else {
           // Check if user already submitted (by email)
@@ -190,11 +189,10 @@
     if (!tbody) return;
 
     if (isDemo()) {
-      // Show demo leaderboard
       tbody.innerHTML = '';
       if (noData) {
         noData.style.display = 'block';
-        noData.textContent = 'Connect Supabase to see the live leaderboard.';
+        noData.textContent = 'Submit your bracket to appear on the leaderboard!';
       }
       return;
     }
