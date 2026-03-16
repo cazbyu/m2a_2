@@ -503,28 +503,58 @@
       const contributorEmail = pending.email || '';
       const contributorClub = pending.rotaryClub || '';
 
-      if (pending.type === 'boost' && pending.cart) {
-        // Record each entrepreneur boost in the contributions table
-        for (const [entId, amount] of Object.entries(pending.cart)) {
-          if (!amount || amount <= 0) continue;
-
-          // Get entrepreneur name from saved metadata
-          const entName = (pending.entNames && pending.entNames[entId]) || entId;
-          const entUuid = entNameToUuid[entName.toLowerCase()] || null;
-
+      if (pending.type === 'boost') {
+        // Record the general donation amount (if any) as a contribution with NULL entrepreneur
+        const generalDonation = pending.donationAmount || 0;
+        if (generalDonation > 0) {
           await supabaseRequest(TABLE_CONTRIBUTIONS, 'POST', {
-            entrepreneur_id: entUuid,
+            entrepreneur_id: null,
             contributor_email: contributorEmail,
             contributor_name: contributorName,
-            amount: amount,
+            amount: generalDonation,
             rotary_club: contributorClub,
             stripe_payment_id: sessionId || '',
             status: 'completed'
           });
         }
 
+        // Record each entrepreneur boost in the contributions table
+        if (pending.cart) {
+          for (const [entId, amount] of Object.entries(pending.cart)) {
+            if (!amount || amount <= 0) continue;
+
+            const entName = (pending.entNames && pending.entNames[entId]) || entId;
+            const entUuid = entNameToUuid[entName.toLowerCase()] || null;
+
+            await supabaseRequest(TABLE_CONTRIBUTIONS, 'POST', {
+              entrepreneur_id: entUuid,
+              contributor_email: contributorEmail,
+              contributor_name: contributorName,
+              amount: amount,
+              rotary_club: contributorClub,
+              stripe_payment_id: sessionId || '',
+              status: 'completed'
+            });
+          }
+        }
+
+        // Update bracket donation_amount if we know the email
+        const totalAmount = pending.amount || 0;
+        if (contributorEmail && totalAmount > 0) {
+          try {
+            const existing = await supabaseRequest(TABLE_BRACKETS, 'GET', null,
+              '?email=eq.' + encodeURIComponent(contributorEmail) + '&select=id,donation_amount&limit=1');
+            if (existing && existing.length > 0) {
+              const currentAmt = parseFloat(existing[0].donation_amount) || 0;
+              await supabaseRequest(TABLE_BRACKETS, 'PATCH',
+                { donation_amount: currentAmt + totalAmount },
+                '?id=eq.' + existing[0].id);
+            }
+          } catch (e) { /* ignore bracket update failure */ }
+        }
+
         if (window.BracketEngine) {
-          window.BracketEngine.showToast('Thank you! Your entrepreneur boosts have been recorded.');
+          window.BracketEngine.showToast('Thank you! Your donation has been recorded.');
         }
 
       } else {
