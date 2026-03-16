@@ -650,6 +650,54 @@
     getCartTotal: getCartTotal
   };
 
+  // ===== Hero Spotlight Rotator =====
+  // Shows a mini entrepreneur card in the hero section, cycling every 5 seconds
+  function initHeroSpotlight() {
+    var spotlight = document.getElementById('hero-ent-spotlight');
+    if (!spotlight) return;
+
+    var currentIndex = 0;
+    var fadeClass = 'hero-ent-fade-in';
+
+    function renderSpotlight() {
+      var ent = ENTREPRENEURS[currentIndex];
+      var flagSrc = (typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[ent.country]) || '';
+      var flagImg = flagSrc
+        ? '<img src="' + flagSrc + '" alt="' + ent.country + '" class="hero-ent-flag">'
+        : '';
+      var photoHtml = ent.photo
+        ? '<img src="' + ent.photo + '" alt="' + ent.name + '" class="hero-ent-photo">'
+        : '<div class="hero-ent-photo hero-ent-photo-placeholder">?</div>';
+
+      var fundedBadge = ent.funded
+        ? '<span class="hero-ent-funded">FUNDED</span>'
+        : '';
+
+      spotlight.classList.remove(fadeClass);
+      // Force reflow to restart animation
+      void spotlight.offsetWidth;
+
+      spotlight.innerHTML =
+        '<a href="#entrepreneurs" class="hero-ent-card">' +
+          photoHtml +
+          '<div class="hero-ent-info">' +
+            '<div class="hero-ent-name">' + ent.name + ' ' + fundedBadge + '</div>' +
+            '<div class="hero-ent-business">' + ent.business + '</div>' +
+            '<div class="hero-ent-country">' + flagImg + ' ' + ent.country + '</div>' +
+          '</div>' +
+        '</a>';
+
+      spotlight.classList.add(fadeClass);
+
+      currentIndex = (currentIndex + 1) % ENTREPRENEURS.length;
+    }
+
+    renderSpotlight();
+    setInterval(renderSpotlight, 5000);
+  }
+
+  initHeroSpotlight();
+
   // ===== Init =====
   renderCards();
 })();

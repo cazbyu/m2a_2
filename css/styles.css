@@ -80,6 +80,97 @@ body {
 .hero-desc { font-size: 1.1rem; color: #ccc; margin-bottom: 24px; max-width: 500px; }
 .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
+/* ===== Hero Entrepreneur Spotlight ===== */
+.hero-ent-spotlight {
+  margin-top: 24px;
+  max-width: 380px;
+}
+.hero-ent-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: #fff;
+  transition: background 0.3s, border-color 0.3s;
+  cursor: pointer;
+}
+.hero-ent-card:hover {
+  background: rgba(255,255,255,0.14);
+  border-color: var(--color-primary);
+}
+.hero-ent-photo {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--color-primary);
+}
+.hero-ent-photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  color: #999;
+  font-size: 1.2rem;
+}
+.hero-ent-info {
+  min-width: 0;
+}
+.hero-ent-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hero-ent-business {
+  font-size: 0.78rem;
+  color: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hero-ent-country {
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-top: 2px;
+}
+.hero-ent-flag {
+  height: 12px;
+  width: auto;
+  vertical-align: middle;
+  margin-right: 2px;
+}
+.hero-ent-funded {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: rgba(34,139,34,0.85);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+.hero-ent-fade-in {
+  animation: heroEntFade 0.6s ease-in-out;
+}
+@keyframes heroEntFade {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 1024px) {
+  .hero-ent-spotlight { margin: 24px auto 0; }
+}
+
 /* ===== Buttons ===== */
 .btn {
   display: inline-block;
