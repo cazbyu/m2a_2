@@ -121,12 +121,17 @@
     slot.appendChild(seedSpan);
     slot.appendChild(nameSpan);
 
-    // Add country flag from entrepreneur mapping
+    // Add country flag image from entrepreneur mapping
     if (team && typeof TEAM_ENTREPRENEUR_MAP !== 'undefined' && TEAM_ENTREPRENEUR_MAP[team.name]) {
-      const flagSpan = document.createElement('span');
-      flagSpan.className = 'team-flag';
-      flagSpan.textContent = TEAM_ENTREPRENEUR_MAP[team.name].flag;
-      slot.appendChild(flagSpan);
+      const info = TEAM_ENTREPRENEUR_MAP[team.name];
+      const flagSrc = typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[info.country];
+      if (flagSrc) {
+        const flagImg = document.createElement('img');
+        flagImg.className = 'team-flag';
+        flagImg.src = flagSrc;
+        flagImg.alt = info.country;
+        slot.appendChild(flagImg);
+      }
     }
 
     if (team) {
@@ -178,12 +183,17 @@
     // Remove existing flag if any
     const existing = slotEl.querySelector('.team-flag');
     if (existing) existing.remove();
-    // Add flag from entrepreneur mapping
+    // Add flag image from entrepreneur mapping
     if (teamName && typeof TEAM_ENTREPRENEUR_MAP !== 'undefined' && TEAM_ENTREPRENEUR_MAP[teamName]) {
-      const flagSpan = document.createElement('span');
-      flagSpan.className = 'team-flag';
-      flagSpan.textContent = TEAM_ENTREPRENEUR_MAP[teamName].flag;
-      slotEl.appendChild(flagSpan);
+      const info = TEAM_ENTREPRENEUR_MAP[teamName];
+      const flagSrc = typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[info.country];
+      if (flagSrc) {
+        const flagImg = document.createElement('img');
+        flagImg.className = 'team-flag';
+        flagImg.src = flagSrc;
+        flagImg.alt = info.country;
+        slotEl.appendChild(flagImg);
+      }
     }
   }
 
@@ -672,8 +682,9 @@
       if (!info) { tooltip.style.display = 'none'; return; }
 
       const firstName = info.name.split(' ')[0];
-      const flagStr = info.flag ? ' ' + info.flag : '';
-      tooltip.innerHTML = 'If <strong>' + team + '</strong> wins, <strong>' + firstName + '</strong>' + flagStr + ' wins';
+      const flagSrc = typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[info.country];
+      const flagImg = flagSrc ? ' <img src="' + flagSrc + '" alt="' + info.country + '" style="height:14px;vertical-align:middle;">' : '';
+      tooltip.innerHTML = 'If <strong>' + team + '</strong> wins, <strong>' + firstName + '</strong>' + flagImg + ' wins';
       tooltip.style.display = 'block';
 
       const rect = slot.getBoundingClientRect();

@@ -381,9 +381,11 @@ body {
   text-overflow: ellipsis;
 }
 .team-slot .team-flag {
-  font-size: 0.75rem;
+  height: 14px;
+  width: auto;
   margin-left: 4px;
   flex-shrink: 0;
+  vertical-align: middle;
 }
 .bracket-right .team-slot .team-flag {
   margin-left: 0;
@@ -1049,8 +1051,8 @@ body {
 }
 .ent-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
 }
 
 .ent-card {
@@ -1073,16 +1075,20 @@ body {
   background: var(--color-selected-bg);
 }
 
+/* Photo area with hover controls */
 .ent-card-photo {
   width: 100%;
-  height: 200px;
+  height: 220px;
   overflow: hidden;
-  background: #f0f0f0;
+  background: #e8e0d4;
+  position: relative;
 }
 .ent-card-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 50%;
+  transition: transform 0.2s;
 }
 .ent-card-photo-placeholder {
   width: 100%;
@@ -1090,73 +1096,131 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e8e8e8;
-  color: #999;
+  background: #e8e0d4;
+  color: #b8a88a;
   font-size: 2.5rem;
+  font-family: var(--font-display);
 }
 
+/* Photo position/zoom controls — visible on hover */
+.ent-photo-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.65);
+  padding: 8px 12px;
+  display: flex;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.ent-card-photo:hover .ent-photo-controls {
+  opacity: 1;
+}
+.ent-photo-controls label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ent-photo-controls label span {
+  color: #ccc;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.ent-photo-controls input[type="range"] {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.ent-photo-controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #E9A825;
+  cursor: pointer;
+}
+.ent-photo-controls input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #E9A825;
+  border: none;
+  cursor: pointer;
+}
+
+/* Card body */
 .ent-card-body {
-  padding: 16px;
+  padding: 16px 20px;
   flex: 1;
 }
 .ent-card-name {
   font-family: var(--font-display);
   font-size: 1.3rem;
-  margin: 0 0 2px;
+  margin: 0 0 4px;
   letter-spacing: 0.5px;
+  color: var(--color-text);
 }
 .ent-card-business {
-  color: var(--color-primary-dark);
+  color: #E9A825;
   font-weight: 600;
   font-size: 0.9rem;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 .ent-card-country {
   color: var(--color-text-light);
   font-size: 0.8rem;
-  margin-bottom: 10px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-.ent-card-plan-link {
-  display: inline-block;
-  font-size: 0.8rem;
-  color: var(--color-primary-dark);
-  text-decoration: none;
-  font-weight: 600;
-  margin-bottom: 10px;
+.ent-card-flag {
+  height: 14px;
+  width: auto;
+  vertical-align: middle;
 }
-.ent-card-plan-link:hover { text-decoration: underline; }
-
-/* Teams assigned to this entrepreneur */
-.ent-card-teams {
-  margin-top: 8px;
+.ent-card-divider {
+  border: none;
+  border-top: 1px solid #e8e0d4;
+  margin: 12px 0;
 }
-.ent-card-teams-label {
-  font-size: 0.7rem;
+.ent-card-desc-label {
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--color-text-light);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   margin-bottom: 6px;
 }
-.ent-card-teams-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+.ent-card-desc {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #555;
+  margin: 0 0 12px;
 }
-.ent-team-tag {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  color: var(--color-text);
-  white-space: nowrap;
+.ent-card-plan-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: #E9A825;
+  text-decoration: none;
+  font-weight: 600;
 }
+.ent-card-plan-link:hover { text-decoration: underline; }
 
 /* Card actions (boost button) */
 .ent-card-actions {
-  padding: 12px 16px;
-  border-top: 1px solid #f0f0f0;
+  padding: 12px 20px;
+  border-top: 1px solid #e8e0d4;
   text-align: center;
 }
 .ent-card-actions .btn-add-to-cart {
@@ -1484,6 +1548,11 @@ body {
 .prize-card p { font-size: 0.9rem; color: var(--color-text-light); line-height: 1.5; }
 
 /* Responsive Entrepreneur Cards */
+@media (max-width: 1024px) {
+  .ent-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 @media (max-width: 768px) {
   .ent-cards-grid {
     grid-template-columns: 1fr;
