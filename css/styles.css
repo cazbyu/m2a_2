@@ -42,7 +42,8 @@ body {
   background: var(--color-secondary);
   color: #fff;
 }
-.nav-brand { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 1px; }
+.nav-brand { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 1px; display: flex; align-items: center; }
+.nav-logo { height: 40px; width: auto; }
 .nav-links { display: flex; gap: 24px; }
 .nav-links a { color: #fff; text-decoration: none; font-weight: 500; font-size: 0.95rem; }
 .nav-links a:hover { color: var(--color-primary); }
@@ -97,6 +98,73 @@ body {
 .btn-entrepreneur { background: var(--color-secondary); color: #fff; border: 2px solid #4a8a2a; }
 .btn-entrepreneur:hover { background: #4a8a2a; transform: translateY(-1px); }
 .btn-large { padding: 16px 36px; font-size: 1.1rem; }
+
+/* ===== Countdown Banner ===== */
+.countdown-banner {
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  padding: 20px 24px;
+  text-align: center;
+  color: #fff;
+}
+.countdown-inner { max-width: 600px; margin: 0 auto; }
+.countdown-label {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.cd-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 56px;
+}
+.cd-unit span {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--color-primary);
+  line-height: 1;
+}
+.cd-unit small {
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.cd-sep {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: #555;
+  padding: 0 2px;
+  margin-top: -14px;
+}
+.countdown-note {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 10px;
+}
+.countdown-locked {
+  background: linear-gradient(135deg, var(--color-accent), #8b1a1a);
+}
+.countdown-locked .countdown-label {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.countdown-locked .countdown-note { color: #ffb3b3; }
+
+@media (max-width: 480px) {
+  .cd-unit { min-width: 44px; }
+  .cd-unit span { font-size: 1.8rem; }
+  .cd-sep { font-size: 1.4rem; }
+}
 
 /* ===== How It Works ===== */
 .how-it-works {
@@ -1351,6 +1419,26 @@ body {
 }
 .admin-link:hover { opacity: 1; color: #999; }
 .footer .footer-content { position: relative; }
+
+/* ===== Team → Entrepreneur Tooltip ===== */
+.team-ent-tooltip {
+  position: fixed;
+  display: none;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 200;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  max-width: 300px;
+}
+.team-ent-tooltip strong {
+  color: var(--color-primary);
+}
 
 /* ===== Toast ===== */
 .toast {

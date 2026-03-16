@@ -34,7 +34,7 @@ exports.handler = async (event) => {
         'line_items[0][price_data][product_data][description]': productDesc,
         'line_items[0][price_data][unit_amount]': amountCents.toString(),
         'line_items[0][quantity]': '1',
-        'success_url': `${origin}?donation=success`,
+        'success_url': `${origin}?donation=success&session_id={CHECKOUT_SESSION_ID}`,
         'cancel_url': `${origin}?donation=cancelled`,
         'submit_type': 'donate'
       }).toString()

@@ -13,7 +13,7 @@
 
   <!-- Navigation -->
   <nav class="navbar">
-    <div class="nav-brand">Sandy Rotary Club</div>
+    <div class="nav-brand"><img src="assets/Sandy Rotary Club_white.png" alt="Sandy Rotary Club" class="nav-logo"></div>
     <div class="nav-links">
       <a href="#bracket">Bracket</a>
       <a href="#leaderboard">Leaderboard</a>
@@ -27,7 +27,7 @@
   <section class="hero" id="home">
     <div class="hero-content">
       <div class="hero-flyer">
-        <img src="assets/flyer-black.png" alt="March -2- Africa Bracket Challenge 2026 Flyer">
+        <img src="assets/flyer-white.png" alt="March -2- Africa Bracket Challenge 2026 Flyer">
       </div>
       <div class="hero-text">
         <h1>March <span class="accent">-2-</span> Africa</h1>
@@ -36,11 +36,27 @@
         <div class="hero-actions">
           <a href="#bracket" class="btn btn-primary">Fill Out Your Bracket</a>
           <a href="#sharkpond" class="btn btn-entrepreneur">&#127988; Rotary Shark Pond</a>
-          <a href="#donate" class="btn btn-secondary">Donate $15</a>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Countdown Banner -->
+  <div class="countdown-banner" id="countdown-banner">
+    <div class="countdown-inner">
+      <div class="countdown-label" id="countdown-label">&#9200; Brackets lock in:</div>
+      <div class="countdown-timer" id="countdown-timer">
+        <div class="cd-unit"><span id="cd-days">0</span><small>days</small></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span id="cd-hours">00</span><small>hrs</small></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span id="cd-mins">00</span><small>min</small></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span id="cd-secs">00</span><small>sec</small></div>
+      </div>
+      <div class="countdown-note" id="countdown-note">Thursday, March 19 &middot; 10:05 AM MT &middot; Boosts stay open!</div>
+    </div>
+  </div>
 
   <!-- How It Works -->
   <section class="how-it-works" id="how">
@@ -49,7 +65,7 @@
       <div class="step">
         <div class="step-number">1</div>
         <h3>Pick Your Teams</h3>
-        <p>Click on teams to advance them through each round of the NCAA tournament bracket.</p>
+        <p>Click on teams to advance them through each round of the tournament bracket. Each team is randomly assigned to an entrepreneur, so when that team wins, the entrepreneur wins points.</p>
       </div>
       <div class="step">
         <div class="step-number">2</div>
@@ -59,7 +75,7 @@
       <div class="step">
         <div class="step-number">3</div>
         <h3>Donate &amp; Support</h3>
-        <p>Contribute $15 (or any amount) to support African entrepreneurs through the Sandy Rotary Club.</p>
+        <p>Contributions are encouraged but not required. Your donations count towards an entrepreneur's score. Boosts target specific entrepreneurs &mdash; support the ones you'd like to see move forward in their competition.</p>
       </div>
     </div>
   </section>
@@ -345,7 +361,7 @@
       <button class="modal-close" id="modal-close">&times;</button>
       <div class="modal-icon">&#127942;</div>
       <h3>Bracket Saved!</h3>
-      <p>Your picks are locked in. Want to make an even bigger impact?</p>
+      <p id="modal-message">Your picks are locked in. Want to make an even bigger impact?</p>
       <div class="modal-actions">
         <a href="#sharkpond" class="btn btn-entrepreneur modal-btn" id="modal-boost-btn">&#128640; Boost an Entrepreneur</a>
         <a href="#donate" class="btn btn-primary modal-btn" id="modal-donate-btn">&#10084; Donate $15</a>

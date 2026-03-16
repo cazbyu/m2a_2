@@ -419,11 +419,11 @@
         }
         break;
       case 'plus':
-        if (cart[entId]) cart[entId] += 5;
+        if (cart[entId]) cart[entId] += 1;
         break;
       case 'minus':
-        if (cart[entId] && cart[entId] > 5) {
-          cart[entId] -= 5;
+        if (cart[entId] && cart[entId] > 1) {
+          cart[entId] -= 1;
         } else {
           delete cart[entId];
         }
@@ -518,9 +518,23 @@
       .then(res => res.json())
       .then(data => {
         if (data.url) {
-          // Save cart to localStorage before redirect so we can attribute later
+          // Save cart + donation metadata so we can record in Supabase after Stripe returns
           try {
+            // Build name map for contribution recording
+            const entNames = {};
+            Object.keys(cart).forEach(function(eid) {
+              const e = getEnt(eid);
+              if (e) entNames[eid] = e.name;
+            });
             localStorage.setItem('m2a_ent_cart', JSON.stringify(cart));
+            localStorage.setItem('m2a_pending_donation', JSON.stringify({
+              type: 'boost',
+              amount: total,
+              cart: { ...cart },
+              entNames: entNames,
+              allocations: allocations,
+              timestamp: Date.now()
+            }));
           } catch (e) { /* ignore */ }
           window.location.href = data.url;
         } else {

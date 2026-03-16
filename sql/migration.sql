@@ -76,7 +76,42 @@ CREATE INDEX IF NOT EXISTS idx_ent_votes_entrepreneur
   ON public."0013_m2a_entrepreneur_votes" (entrepreneur_id, week);
 
 
--- 4. Leaderboard View
+-- 4. Contributions (already exists — alter to allow general donations)
+-- Make entrepreneur_id nullable so general donations (not tied to a specific
+-- entrepreneur) can be recorded alongside entrepreneur-specific boosts.
+ALTER TABLE public."0013_m2a_contributions"
+  ALTER COLUMN entrepreneur_id DROP NOT NULL;
+
+-- Drop FK constraint if it prevents NULL inserts; re-add as optional
+ALTER TABLE public."0013_m2a_contributions"
+  DROP CONSTRAINT IF EXISTS "0013_m2a_contributions_entrepreneur_id_fkey";
+
+ALTER TABLE public."0013_m2a_contributions"
+  ADD CONSTRAINT "0013_m2a_contributions_entrepreneur_id_fkey"
+  FOREIGN KEY (entrepreneur_id) REFERENCES public."0013_m2a_entrepreneurs"(id)
+  ON DELETE SET NULL;
+
+
+-- 5. Populate entrepreneurs table with all 11 entrepreneurs
+-- (Uses ON CONFLICT DO NOTHING if they already exist by name check)
+INSERT INTO public."0013_m2a_entrepreneurs" (name, business_name, description, business_plan_url, image_url, funding_goal, is_active)
+SELECT * FROM (VALUES
+  ('Kate Nanyangwe',         'Nails By Kate & Hair Salon',    'Zambia',  'https://entrapov.com/wp-content/uploads/2026/03/Nails-By-Kate-Business-Plan.docx.pdf',                                             'https://entrapov.com/wp-content/uploads/2026/03/Snip20260314_2.png',       500, true),
+  ('Jane Ndashe',            'JP Enterprise',                 'Zambia',  'https://entrapov.com/wp-content/uploads/2026/03/Entrapov-Business-Plan-JP-ENTERPRISE.docx.pdf',                                     'https://entrapov.com/wp-content/uploads/2026/03/Snip20260314_1.png',       500, true),
+  ('Nanyangwe Katai',        'Chichi Braids',                 'Zambia',  'https://entrapov.com/wp-content/uploads/2026/02/Entrapov-Business-Plan-CHICHI-BRAIDS.docx.pdf',                                     'https://entrapov.com/wp-content/uploads/2026/02/Snip20260226_1.png',       500, true),
+  ('Saukilan Kapatamoyo',    'God''s Grace Detergent',        'Malawi',  'https://entrapov.com/wp-content/uploads/2026/02/Saukilan-Kapatamoyo.docx.pdf',                                                     'https://entrapov.com/wp-content/uploads/2026/02/Gods-Grace-Detergent-604x620.jpg', 500, true),
+  ('Sandra Chisala',         'High Voltage Fabrication',      'Zambia',  'https://entrapov.com/wp-content/uploads/2026/02/HIGH-VOLTAGE-BUSINESS-PLAN.docx.pdf',                                              'https://entrapov.com/wp-content/uploads/2026/02/Snip20260214_1.png',       500, true),
+  ('Kendrick B. Makhurane',  'Key B Manufacturers',           'Lesotho', 'https://entrapov.com/wp-content/uploads/2026/02/Key-B_Business-Plan.docx-1-1.docx-3.pdf',                                          'https://entrapov.com/wp-content/uploads/2026/02/Snip20260213_7-686x620.png', 500, true),
+  ('Lyampu Mubiana',         'Lyamupu''s Pastry Kitchen',     'Zambia',  'https://entrapov.com/wp-content/uploads/2026/01/Lyamupus-Pastry-Kitchen.docx.pdf',                                                 'https://entrapov.com/wp-content/uploads/2026/01/Snip20260126_2.png',       500, true),
+  ('Monica Ntchalachala',    'Femmo Second Hand Clothes',     'Malawi',  'https://entrapov.com/wp-content/uploads/2026/01/1754573627541_1754573623418_Entrapov-Business-Plan-Template-Monica.docx-1.pdf',     'https://entrapov.com/wp-content/uploads/2026/01/Snip20260123_4.png',       500, true),
+  ('Enrique Hannock',        'Nexora Technology Company',     'Kenya',   'https://entrapov.com/wp-content/uploads/2026/01/ENRIQUE-HANNOCK-PROPOSAL.pdf.pdf',                                                 'https://entrapov.com/wp-content/uploads/2026/01/Snip20260113_2-536x620.png', 500, true),
+  ('Jibril',                 'TBD',                           'Kenya',   '', '', 500, true),
+  ('Esther Ruhara',          'TBD',                           'Kenya',   '', '', 500, true)
+) AS v(name, business_name, description, business_plan_url, image_url, funding_goal, is_active)
+WHERE NOT EXISTS (SELECT 1 FROM public."0013_m2a_entrepreneurs" e WHERE e.name = v.name);
+
+
+-- 6. Leaderboard View
 -- Ranks users by total_score, then by closest predicted championship
 -- total to 140 (average NCAA championship combined score), then by
 -- earliest submission.
@@ -147,6 +182,24 @@ CREATE POLICY "Allow public insert on results"
 DROP POLICY IF EXISTS "Allow public update on results" ON public."0013_m2a_results";
 CREATE POLICY "Allow public update on results"
   ON public."0013_m2a_results" FOR UPDATE USING (true) WITH CHECK (true);
+
+-- Policies: public read + insert on contributions
+ALTER TABLE public."0013_m2a_contributions" ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read on contributions" ON public."0013_m2a_contributions";
+CREATE POLICY "Allow public read on contributions"
+  ON public."0013_m2a_contributions" FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public insert on contributions" ON public."0013_m2a_contributions";
+CREATE POLICY "Allow public insert on contributions"
+  ON public."0013_m2a_contributions" FOR INSERT WITH CHECK (true);
+
+-- Policies: public read on entrepreneurs (needed for name → UUID lookup)
+ALTER TABLE public."0013_m2a_entrepreneurs" ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public read on entrepreneurs" ON public."0013_m2a_entrepreneurs";
+CREATE POLICY "Allow public read on entrepreneurs"
+  ON public."0013_m2a_entrepreneurs" FOR SELECT USING (true);
 
 -- Policies: public read + insert on entrepreneur votes
 DROP POLICY IF EXISTS "Allow public read on entrepreneur votes" ON public."0013_m2a_entrepreneur_votes";

@@ -12,6 +12,8 @@
   const TABLE_BRACKETS = '0013_m2a_bracket';
   const TABLE_RESULTS = '0013_m2a_results';
   const TABLE_VOTES = '0013_m2a_entrepreneur_votes';
+  const TABLE_CONTRIBUTIONS = '0013_m2a_contributions';
+  const TABLE_ENTREPRENEURS = '0013_m2a_entrepreneurs';
   const VIEW_LEADERBOARD = '0013_m2a_leaderboard';
   const VIEW_ENT_TOTALS = '0013_m2a_entrepreneur_totals';
 
@@ -108,6 +110,12 @@
         return;
       }
 
+      // Check bracket deadline
+      if (window.BracketEngine.isBracketLocked && window.BracketEngine.isBracketLocked()) {
+        showMessage('Brackets are locked! The deadline has passed.', 'error');
+        return;
+      }
+
       const picks = window.BracketEngine.getPicks();
       const pickCount = window.BracketEngine.getPickCount();
 
@@ -188,6 +196,22 @@
   function showPostSaveModal() {
     const modal = document.getElementById('post-save-modal');
     if (!modal) return;
+
+    // Update modal message with champion's entrepreneur
+    const msgEl = document.getElementById('modal-message');
+    if (msgEl && window.BracketEngine) {
+      const picks = window.BracketEngine.getPicks();
+      const champPick = picks['ff-champ'];
+      if (champPick && window.BracketEngine.getEntrepreneurForTeam) {
+        const entInfo = window.BracketEngine.getEntrepreneurForTeam(champPick.team);
+        if (entInfo) {
+          const firstName = entInfo.name.split(' ')[0];
+          const flagStr = entInfo.flag ? ' ' + entInfo.flag : '';
+          msgEl.innerHTML = 'You\'re helping <strong>' + firstName + flagStr + '</strong> &mdash; would you like to add a boost to them or someone else?';
+        }
+      }
+    }
+
     modal.style.display = 'flex';
 
     const close = () => { modal.style.display = 'none'; };
@@ -429,6 +453,120 @@
     });
   }
 
+  // ===== Process Return from Stripe =====
+  // When user comes back from Stripe with ?donation=success,
+  // read pending donation info from localStorage and record in Supabase.
+
+  async function processStripeReturn() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('donation') !== 'success') return;
+
+    const sessionId = params.get('session_id') || '';
+
+    // Clean URL (remove query params without reload)
+    try {
+      const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', cleanUrl);
+    } catch (e) { /* ignore */ }
+
+    // Read pending donation from localStorage
+    let pending = null;
+    try {
+      const raw = localStorage.getItem('m2a_pending_donation');
+      if (raw) pending = JSON.parse(raw);
+    } catch (e) { /* ignore */ }
+
+    if (!pending) {
+      // No pending info but donation succeeded — show generic success
+      if (window.BracketEngine) window.BracketEngine.showToast('Thank you for your donation!');
+      return;
+    }
+
+    if (isDemo()) {
+      console.log('Demo mode — donation recorded locally:', pending);
+      localStorage.removeItem('m2a_pending_donation');
+      localStorage.removeItem('m2a_ent_cart');
+      if (window.BracketEngine) window.BracketEngine.showToast('Thank you for your donation!');
+      return;
+    }
+
+    try {
+      // Fetch entrepreneurs table to map names → UUIDs
+      let entNameToUuid = {};
+      try {
+        const entRows = await supabaseRequest(TABLE_ENTREPRENEURS, 'GET', null, '?select=id,name&is_active=eq.true');
+        if (entRows) {
+          entRows.forEach(function(e) { entNameToUuid[e.name.toLowerCase()] = e.id; });
+        }
+      } catch (e) { console.warn('Could not fetch entrepreneurs table:', e); }
+
+      const contributorName = ((pending.firstName || '') + ' ' + (pending.lastName || '')).trim();
+      const contributorEmail = pending.email || '';
+
+      if (pending.type === 'boost' && pending.cart) {
+        // Record each entrepreneur boost in the contributions table
+        for (const [entId, amount] of Object.entries(pending.cart)) {
+          if (!amount || amount <= 0) continue;
+
+          // Get entrepreneur name from saved metadata
+          const entName = (pending.entNames && pending.entNames[entId]) || entId;
+          const entUuid = entNameToUuid[entName.toLowerCase()] || null;
+
+          await supabaseRequest(TABLE_CONTRIBUTIONS, 'POST', {
+            entrepreneur_id: entUuid,
+            contributor_email: contributorEmail,
+            contributor_name: contributorName,
+            amount: amount,
+            stripe_payment_id: sessionId || '',
+            status: 'completed'
+          });
+        }
+
+        if (window.BracketEngine) {
+          window.BracketEngine.showToast('Thank you! Your entrepreneur boosts have been recorded.');
+        }
+
+      } else {
+        // General donation — record with NULL entrepreneur_id
+        await supabaseRequest(TABLE_CONTRIBUTIONS, 'POST', {
+          entrepreneur_id: null,
+          contributor_email: contributorEmail,
+          contributor_name: contributorName,
+          amount: pending.amount || 0,
+          stripe_payment_id: sessionId || '',
+          status: 'completed'
+        });
+
+        // Also update the bracket's donation_amount if we know the email
+        if (contributorEmail) {
+          try {
+            const existing = await supabaseRequest(TABLE_BRACKETS, 'GET', null,
+              '?email=eq.' + encodeURIComponent(contributorEmail) + '&select=id,donation_amount&limit=1');
+            if (existing && existing.length > 0) {
+              const currentAmt = parseFloat(existing[0].donation_amount) || 0;
+              await supabaseRequest(TABLE_BRACKETS, 'PATCH',
+                { donation_amount: currentAmt + (pending.amount || 0) },
+                '?id=eq.' + existing[0].id);
+            }
+          } catch (e) { /* ignore bracket update failure */ }
+        }
+
+        if (window.BracketEngine) {
+          window.BracketEngine.showToast('Thank you for your donation of $' + (pending.amount || 0) + '!');
+        }
+      }
+    } catch (err) {
+      console.error('Error recording donation:', err);
+      if (window.BracketEngine) {
+        window.BracketEngine.showToast('Thank you for your donation!');
+      }
+    } finally {
+      // Clean up localStorage
+      localStorage.removeItem('m2a_pending_donation');
+      localStorage.removeItem('m2a_ent_cart');
+    }
+  }
+
   // ===== Public API =====
 
   window.SupabaseClient = {
@@ -452,6 +590,7 @@
   function init() {
     loadLeaderboard();
     setupLoadBracket();
+    processStripeReturn();
   }
 
   if (document.readyState === 'loading') {

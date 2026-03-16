@@ -21,6 +21,8 @@
     setupNavToggle();
     setupDonateButtons();
     setupScoreInputs();
+    setupTeamTooltips();
+    setupCountdown();
     // Don't auto-load picks — users must login via "Load My Bracket" to see/edit
     updateChampionshipTeamNames();
     updateProgress();
@@ -412,6 +414,20 @@
           .then(res => res.json())
           .then(data => {
             if (data.url) {
+              // Save pending donation info so we can record it after Stripe returns
+              try {
+                const email = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
+                const firstName = document.getElementById('first-name') ? document.getElementById('first-name').value.trim() : '';
+                const lastName = document.getElementById('last-name') ? document.getElementById('last-name').value.trim() : '';
+                localStorage.setItem('m2a_pending_donation', JSON.stringify({
+                  type: 'donation',
+                  amount: amount,
+                  email: email,
+                  firstName: firstName,
+                  lastName: lastName,
+                  timestamp: Date.now()
+                }));
+              } catch (e) { /* ignore */ }
               window.location.href = data.url;
             } else {
               showToast(data.error || 'Unable to start checkout. Please try again.');
@@ -542,6 +558,97 @@
     saveToLocalStorage();
   }
 
+  // ===== Countdown Timer =====
+  // Brackets lock Thursday March 19 at 10:05 AM MT (Mountain Daylight = UTC-6)
+
+  const BRACKET_DEADLINE = new Date('2026-03-19T16:05:00Z'); // 10:05 AM MDT
+
+  function setupCountdown() {
+    const banner = document.getElementById('countdown-banner');
+    if (!banner) return;
+
+    function tick() {
+      const now = new Date();
+      const diff = BRACKET_DEADLINE - now;
+
+      if (diff <= 0) {
+        // Brackets locked
+        banner.classList.add('countdown-locked');
+        document.getElementById('countdown-label').innerHTML = '&#128274; Brackets are locked!';
+        document.getElementById('countdown-timer').style.display = 'none';
+        document.getElementById('countdown-note').textContent = 'Boosts are still open \u2014 support your favorite entrepreneur!';
+
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Brackets Locked';
+        }
+        return; // Stop ticking
+      }
+
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+
+      document.getElementById('cd-days').textContent = days;
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+      document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+
+      setTimeout(tick, 1000);
+    }
+
+    tick();
+  }
+
+  // Expose deadline for form validation
+  function isBracketLocked() {
+    return new Date() >= BRACKET_DEADLINE;
+  }
+
+  // ===== Team → Entrepreneur Tooltips =====
+
+  function setupTeamTooltips() {
+    const container = document.getElementById('bracket-container');
+    if (!container || typeof TEAM_ENTREPRENEUR_MAP === 'undefined') return;
+
+    // Create a single reusable tooltip element
+    const tooltip = document.createElement('div');
+    tooltip.id = 'team-ent-tooltip';
+    tooltip.className = 'team-ent-tooltip';
+    document.body.appendChild(tooltip);
+
+    container.addEventListener('mouseover', (e) => {
+      const slot = e.target.closest('.team-slot');
+      if (!slot || !slot.dataset.team) { tooltip.style.display = 'none'; return; }
+
+      const team = slot.dataset.team;
+      const info = TEAM_ENTREPRENEUR_MAP[team];
+      if (!info) { tooltip.style.display = 'none'; return; }
+
+      const firstName = info.name.split(' ')[0];
+      const flagStr = info.flag ? ' ' + info.flag : '';
+      tooltip.innerHTML = 'If <strong>' + team + '</strong> wins, <strong>' + firstName + '</strong>' + flagStr + ' wins';
+      tooltip.style.display = 'block';
+
+      const rect = slot.getBoundingClientRect();
+      tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+      tooltip.style.top = (rect.top - 6) + 'px';
+    });
+
+    container.addEventListener('mouseout', (e) => {
+      const slot = e.target.closest('.team-slot');
+      if (slot) tooltip.style.display = 'none';
+    });
+  }
+
+  // Helper: look up entrepreneur for a team name (used by post-save modal)
+  function getEntrepreneurForTeam(teamName) {
+    if (typeof TEAM_ENTREPRENEUR_MAP === 'undefined' || !teamName) return null;
+    return TEAM_ENTREPRENEUR_MAP[teamName] || null;
+  }
+
   // ===== Public API =====
 
   // Load picks from an external source (e.g., Supabase)
@@ -619,7 +726,9 @@
     },
     loadPicks,
     loadChampionshipScores,
-    showToast
+    showToast,
+    getEntrepreneurForTeam,
+    isBracketLocked
   };
 
   // Initialize on DOM ready
