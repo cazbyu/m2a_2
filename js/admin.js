@@ -13,7 +13,7 @@
 
   // Admin credential hash (SHA-256)
   const ADMIN_EMAIL = 'cazbyu@gmail.com';
-  const ADMIN_HASH = '13b734f25a71ba0023c56a942cae92dc7d14df3f03affb7fcd9aec41749941ed';
+  const ADMIN_HASH = 'fec501d608928f3b03f26155b5bff5da8ed7167b2b2c01d13d5d6138325c4404';
 
   // Scoring points per round
   const POINTS_PER_ROUND = { 1: 5, 2: 10, 3: 20, 4: 40, 5: 80, 6: 160 };
