@@ -1,10 +1,11 @@
 -- ============================================================
 -- March -2- Africa Bracket Challenge — Supabase Migration
 -- Run this in the Supabase SQL Editor to create all tables.
+-- Safe to run multiple times (uses IF NOT EXISTS / OR REPLACE).
 -- ============================================================
 
 -- 1. Bracket Submissions
--- Stores each user's bracket picks, champion, score prediction, and computed score.
+-- If table already exists, add missing columns. If not, create it.
 CREATE TABLE IF NOT EXISTS public."0013_m2a_bracket" (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   first_name text NOT NULL,
@@ -12,26 +13,35 @@ CREATE TABLE IF NOT EXISTS public."0013_m2a_bracket" (
   email text NOT NULL,
   picks jsonb NOT NULL DEFAULT '{}'::jsonb,
   champion text NOT NULL DEFAULT ''::text,
-  champ_score1 integer NULL DEFAULT 0,
-  champ_score2 integer NULL DEFAULT 0,
-  total_score integer NULL DEFAULT 0,
   donation_amount numeric NULL DEFAULT 0,
   ghl_synced boolean NULL DEFAULT false,
   created_at timestamp with time zone NULL DEFAULT now(),
   CONSTRAINT "0013_m2a_bracket_pkey" PRIMARY KEY (id)
 ) TABLESPACE pg_default;
 
--- Index for leaderboard queries (score DESC, then by name)
+-- Add scoring columns if they don't exist yet
+-- (handles tables created before scoring was added)
+ALTER TABLE public."0013_m2a_bracket"
+  ADD COLUMN IF NOT EXISTS champ_score1 integer DEFAULT 0;
+
+ALTER TABLE public."0013_m2a_bracket"
+  ADD COLUMN IF NOT EXISTS champ_score2 integer DEFAULT 0;
+
+ALTER TABLE public."0013_m2a_bracket"
+  ADD COLUMN IF NOT EXISTS total_score integer DEFAULT 0;
+
+-- Index for leaderboard queries (score DESC, then by submission time)
 CREATE INDEX IF NOT EXISTS idx_bracket_score
   ON public."0013_m2a_bracket" (total_score DESC, created_at ASC);
 
--- Index for email lookups (returning users)
+-- Index for email lookups (returning users / update-on-resubmit)
 CREATE INDEX IF NOT EXISTS idx_bracket_email
   ON public."0013_m2a_bracket" (email);
 
+
 -- 2. Tournament Results
 -- Admin enters actual game results here. The scoring engine compares
--- each user's picks against these results.
+-- each user's picks against these results to calculate scores.
 CREATE TABLE IF NOT EXISTS public."0013_m2a_results" (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   game_id text NOT NULL,
@@ -43,6 +53,7 @@ CREATE TABLE IF NOT EXISTS public."0013_m2a_results" (
   CONSTRAINT "0013_m2a_results_pkey" PRIMARY KEY (id),
   CONSTRAINT "0013_m2a_results_game_id_key" UNIQUE (game_id)
 ) TABLESPACE pg_default;
+
 
 -- 3. Entrepreneur Votes / Donations
 -- Each row = one donation allocated to a specific entrepreneur.
@@ -64,8 +75,11 @@ CREATE TABLE IF NOT EXISTS public."0013_m2a_entrepreneur_votes" (
 CREATE INDEX IF NOT EXISTS idx_ent_votes_entrepreneur
   ON public."0013_m2a_entrepreneur_votes" (entrepreneur_id, week);
 
+
 -- 4. Leaderboard View
--- Convenient view for the frontend leaderboard.
+-- Ranks users by total_score, then by closest predicted championship
+-- total to 140 (average NCAA championship combined score), then by
+-- earliest submission.
 CREATE OR REPLACE VIEW public."0013_m2a_leaderboard" AS
 SELECT
   id,
@@ -87,6 +101,7 @@ ORDER BY total_score DESC,
   ABS((COALESCE(champ_score1, 0) + COALESCE(champ_score2, 0)) - 140) ASC,
   created_at ASC;
 
+
 -- 5. Entrepreneur Totals View
 -- Tallies total raised per entrepreneur for each week.
 CREATE OR REPLACE VIEW public."0013_m2a_entrepreneur_totals" AS
@@ -100,37 +115,40 @@ FROM public."0013_m2a_entrepreneur_votes"
 GROUP BY entrepreneur_id, entrepreneur_name, week
 ORDER BY week, total_raised DESC;
 
+
 -- 6. Row Level Security (RLS)
--- Enable RLS on all tables
 ALTER TABLE public."0013_m2a_bracket" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."0013_m2a_results" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public."0013_m2a_entrepreneur_votes" ENABLE ROW LEVEL SECURITY;
 
--- Allow anonymous reads for leaderboard and results
+-- Policies: public read + insert on brackets
+-- (DROP first so re-running is safe)
+DROP POLICY IF EXISTS "Allow public read on brackets" ON public."0013_m2a_bracket";
 CREATE POLICY "Allow public read on brackets"
-  ON public."0013_m2a_bracket"
-  FOR SELECT
-  USING (true);
+  ON public."0013_m2a_bracket" FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow public insert on brackets" ON public."0013_m2a_bracket";
 CREATE POLICY "Allow public insert on brackets"
-  ON public."0013_m2a_bracket"
-  FOR INSERT
-  WITH CHECK (true);
+  ON public."0013_m2a_bracket" FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow public update on brackets" ON public."0013_m2a_bracket";
+CREATE POLICY "Allow public update on brackets"
+  ON public."0013_m2a_bracket" FOR UPDATE USING (true) WITH CHECK (true);
+
+-- Policies: public read on results (admin inserts via dashboard)
+DROP POLICY IF EXISTS "Allow public read on results" ON public."0013_m2a_results";
 CREATE POLICY "Allow public read on results"
-  ON public."0013_m2a_results"
-  FOR SELECT
-  USING (true);
+  ON public."0013_m2a_results" FOR SELECT USING (true);
 
+-- Policies: public read + insert on entrepreneur votes
+DROP POLICY IF EXISTS "Allow public read on entrepreneur votes" ON public."0013_m2a_entrepreneur_votes";
 CREATE POLICY "Allow public read on entrepreneur votes"
-  ON public."0013_m2a_entrepreneur_votes"
-  FOR SELECT
-  USING (true);
+  ON public."0013_m2a_entrepreneur_votes" FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow public insert on entrepreneur votes" ON public."0013_m2a_entrepreneur_votes";
 CREATE POLICY "Allow public insert on entrepreneur votes"
-  ON public."0013_m2a_entrepreneur_votes"
-  FOR INSERT
-  WITH CHECK (true);
+  ON public."0013_m2a_entrepreneur_votes" FOR INSERT WITH CHECK (true);
+
 
 -- ============================================================
 -- SCORING SYSTEM REFERENCE
@@ -146,7 +164,7 @@ CREATE POLICY "Allow public insert on entrepreneur votes"
 --
 -- ESPN uses: 10/20/40/80/160/320 (max 1920) — same ratio, 2x values
 --
--- Tiebreaker: Closest predicted championship total score
+-- Tiebreaker: Closest predicted championship total score (avg ~140)
 -- ============================================================
 
 -- ============================================================
