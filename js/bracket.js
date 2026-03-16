@@ -456,44 +456,26 @@
           return;
         }
 
-        // Call Netlify serverless function to create Stripe Checkout session
-        donateBtn.disabled = true;
-        donateBtn.textContent = 'Redirecting...';
+        // Add donation to entrepreneur boost cart instead of going directly to Stripe
+        if (window.EntrepreneurBoost) {
+          // Check if bracket has a champion pick — auto-suggest that entrepreneur
+          const suggestion = window.EntrepreneurBoost.getChampionSuggestion();
+          if (suggestion) {
+            window.EntrepreneurBoost.addToCart(suggestion.entId, amount);
+            showToast('$' + amount + ' boost added for ' + suggestion.name + '!');
+          } else {
+            // No champion yet — scroll to entrepreneurs so user can pick
+            showToast('Choose an entrepreneur to boost with your $' + amount + ' donation!');
+          }
 
-        fetch('/.netlify/functions/create-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount })
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.url) {
-              // Save pending donation info so we can record it after Stripe returns
-              try {
-                const email = document.getElementById('email') ? document.getElementById('email').value.trim() : '';
-                const firstName = document.getElementById('first-name') ? document.getElementById('first-name').value.trim() : '';
-                const lastName = document.getElementById('last-name') ? document.getElementById('last-name').value.trim() : '';
-                localStorage.setItem('m2a_pending_donation', JSON.stringify({
-                  type: 'donation',
-                  amount: amount,
-                  email: email,
-                  firstName: firstName,
-                  lastName: lastName,
-                  timestamp: Date.now()
-                }));
-              } catch (e) { /* ignore */ }
-              window.location.href = data.url;
-            } else {
-              showToast(data.error || 'Unable to start checkout. Please try again.');
-              donateBtn.disabled = false;
-              donateBtn.textContent = 'Donate Now';
-            }
-          })
-          .catch(() => {
-            showToast('Unable to connect to payment server. Please try again.');
-            donateBtn.disabled = false;
-            donateBtn.textContent = 'Donate Now';
-          });
+          // Scroll to entrepreneurs section and open cart
+          document.getElementById('entrepreneurs').scrollIntoView({ behavior: 'smooth' });
+          setTimeout(function () {
+            window.EntrepreneurBoost.openCart();
+          }, 500);
+        } else {
+          showToast('Please try again in a moment.');
+        }
       });
     }
   }

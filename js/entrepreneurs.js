@@ -311,6 +311,20 @@
         '</div>';
       }).join('');
 
+    // Champion suggestion banner
+    var suggestionHtml = '';
+    var suggestion = getChampionSuggestion();
+    if (suggestion) {
+      var alreadyInCart = cart[suggestion.entId] && cart[suggestion.entId] > 0;
+      if (alreadyInCart) {
+        var flagSrc = (typeof COUNTRY_FLAGS !== 'undefined' && COUNTRY_FLAGS[suggestion.country]) || '';
+        var flagImg = flagSrc ? '<img src="' + flagSrc + '" alt="' + suggestion.country + '" class="ent-cart-suggestion-flag">' : '';
+        suggestionHtml = '<div class="ent-cart-suggestion">' +
+          flagImg + ' Your donation boosts <strong>' + suggestion.name + '</strong> from ' + suggestion.country +
+        '</div>';
+      }
+    }
+
     cartEl.innerHTML =
       '<div class="ent-cart-header" id="ent-cart-toggle">' +
         '<span>&#128640; My Boosts</span>' +
@@ -318,7 +332,9 @@
         '<span class="ent-cart-toggle-icon">&#9660;</span>' +
       '</div>' +
       '<div class="ent-cart-body" id="ent-cart-body">' +
+        suggestionHtml +
         cartItems +
+        '<a href="#entrepreneurs" class="ent-cart-browse-link">Browse all entrepreneurs &darr;</a>' +
         '<div class="ent-cart-rotary">' +
           '<label for="rotary-club-input" class="ent-cart-rotary-label">What Rotary Club are you with?</label>' +
           '<input type="text" id="rotary-club-input" class="ent-cart-rotary-input" placeholder="e.g. Sandy Rotary Club" value="' + (rotaryClub || '').replace(/"/g, '&quot;') + '">' +
@@ -591,6 +607,48 @@
     e.stopPropagation();
     handleCartAction(btn.dataset.entId, btn.dataset.action);
   });
+
+  // ===== Champion Suggestion =====
+  // Reads the user's champion pick from BracketEngine and suggests boosting that entrepreneur
+  function getChampionSuggestion() {
+    if (!window.BracketEngine) return null;
+    var picks = window.BracketEngine.getPicks();
+    var champPick = picks['ff-champ'];
+    if (!champPick || !champPick.team) return null;
+    var entInfo = window.BracketEngine.getEntrepreneurForTeam(champPick.team);
+    if (!entInfo) return null;
+    // Find the entrepreneur ID from our data
+    var ent = ENTREPRENEURS.find(function (e) { return e.name === entInfo.name; });
+    if (!ent) return null;
+    return { entId: ent.id, name: ent.name, country: entInfo.country, team: champPick.team };
+  }
+
+  // ===== Public API =====
+  // Exposed so the donate button and other modules can interact with the cart
+  window.EntrepreneurBoost = {
+    addToCart: function (entId, amount) {
+      cart[entId] = (cart[entId] || 0) + amount;
+      renderCards();
+    },
+    openCart: function () {
+      var cartEl = document.getElementById('ent-cart-floating');
+      if (cartEl) {
+        var body = cartEl.querySelector('#ent-cart-body');
+        if (body && !body.classList.contains('open')) {
+          body.classList.add('open');
+          var icon = cartEl.querySelector('.ent-cart-toggle-icon');
+          if (icon) icon.textContent = '\u25B2';
+        }
+      }
+    },
+    getEntIdByName: function (name) {
+      var ent = ENTREPRENEURS.find(function (e) { return e.name === name; });
+      return ent ? ent.id : null;
+    },
+    getChampionSuggestion: getChampionSuggestion,
+    getCart: function () { return cart; },
+    getCartTotal: getCartTotal
+  };
 
   // ===== Init =====
   renderCards();

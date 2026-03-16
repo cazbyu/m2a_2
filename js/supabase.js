@@ -501,6 +501,7 @@
 
       const contributorName = ((pending.firstName || '') + ' ' + (pending.lastName || '')).trim();
       const contributorEmail = pending.email || '';
+      const contributorClub = pending.rotaryClub || '';
 
       if (pending.type === 'boost' && pending.cart) {
         // Record each entrepreneur boost in the contributions table
@@ -516,6 +517,7 @@
             contributor_email: contributorEmail,
             contributor_name: contributorName,
             amount: amount,
+            rotary_club: contributorClub,
             stripe_payment_id: sessionId || '',
             status: 'completed'
           });
@@ -534,6 +536,7 @@
           contributor_email: contributorEmail,
           contributor_name: contributorName,
           amount: donationAmount,
+          rotary_club: contributorClub,
           stripe_payment_id: sessionId || '',
           status: 'completed'
         });
@@ -643,6 +646,7 @@
             contributor_email: email,
             contributor_name: name,
             amount: amount,
+            rotary_club: '',
             stripe_payment_id: (sessionId || '') + '-boost-attribution',
             status: 'completed'
           });

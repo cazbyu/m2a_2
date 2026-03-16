@@ -91,6 +91,10 @@ CREATE INDEX IF NOT EXISTS idx_ent_votes_entrepreneur
 ALTER TABLE public."0013_m2a_contributions"
   ALTER COLUMN entrepreneur_id DROP NOT NULL;
 
+-- Rotary Club column for tracking which club a donor belongs to
+ALTER TABLE public."0013_m2a_contributions"
+  ADD COLUMN IF NOT EXISTS rotary_club text DEFAULT ''::text;
+
 -- Drop FK constraint if it prevents NULL inserts; re-add as optional
 ALTER TABLE public."0013_m2a_contributions"
   DROP CONSTRAINT IF EXISTS "0013_m2a_contributions_entrepreneur_id_fkey";
