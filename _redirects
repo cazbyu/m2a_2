@@ -7,6 +7,8 @@
 /leaderboard.html      /leaderboard.html  200
 /admin.html            /admin.html        200
 
-# Redirect root and everything else to the main Rotary site
-/               https://sandyrotary.org   301!
-/*              https://sandyrotary.org   301
+# Root goes straight to the march2africa page
+/               /index.html        200
+
+# Everything else redirects to the foundation march2africa page
+/*              https://sandyrotaryfoundation.org/march2africa/  301
