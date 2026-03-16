@@ -589,7 +589,7 @@
 
     if (region === 'ff') {
       roundSelect.innerHTML = `
-        <option value="5">Final Four &mdash; 80 pts</option>
+        <option value="5">Finals &mdash; 80 pts</option>
         <option value="6">Championship &mdash; 160 pts</option>
       `;
       roundSelect.style.display = 'none'; // FF games shown all at once

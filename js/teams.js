@@ -1,4 +1,4 @@
-// NCAA Tournament 2025-26 Bracket Data
+// Tournament 2025-26 Bracket Data
 // Extracted from Sandy Rotary Club bracket spreadsheet
 
 const TOURNAMENT = {
@@ -116,13 +116,13 @@ const TOURNAMENT = {
     "Round of 32",
     "Sweet 16",
     "Elite 8",
-    "Final Four",
+    "Finals",
     "Championship"
   ]
 };
 
 // ===== Team → Entrepreneur Mapping =====
-// Each NCAA team is randomly assigned to an entrepreneur.
+// Each tournament team is randomly assigned to an entrepreneur.
 // When that team wins, the entrepreneur wins points.
 
 const TEAM_ENTREPRENEUR_MAP = {

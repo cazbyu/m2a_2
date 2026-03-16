@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard | March -2- Africa Bracket Challenge</title>
+  <meta name="description" content="See who's leading the March -2- Africa Bracket Challenge! Track scores and standings as the tournament progresses.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand"><a href="index.html"><img src="assets/Sandy Rotary Club_white.png" alt="Sandy Rotary Club" class="nav-logo"></a></div>
+    <div class="nav-links">
+      <a href="index.html#bracket">Bracket</a>
+      <a href="leaderboard.html" class="active">Leaderboard</a>
+      <a href="index.html#sharkpond">Rotary Shark Pond</a>
+      <a href="index.html#donate" class="nav-donate">Donate</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
+  </nav>
+
+  <!-- Leaderboard Section -->
+  <section class="leaderboard-section leaderboard-page" id="leaderboard">
+    <h2>Bracket Leaderboard</h2>
+    <p class="leaderboard-subtitle">Track your standing as the tournament unfolds!</p>
+    <div class="scoring-info">
+      <p class="scoring-title">Scoring System</p>
+      <div class="scoring-rounds">
+        <span class="scoring-round">R64: <strong>5 pts</strong></span>
+        <span class="scoring-round">R32: <strong>10 pts</strong></span>
+        <span class="scoring-round">Sweet 16: <strong>20 pts</strong></span>
+        <span class="scoring-round">Elite 8: <strong>40 pts</strong></span>
+        <span class="scoring-round">Finals: <strong>80 pts</strong></span>
+        <span class="scoring-round">Championship: <strong>160 pts</strong></span>
+      </div>
+      <p class="scoring-max">Maximum possible: <strong>960 points</strong> &bull; Tiebreaker: closest predicted championship total score</p>
+    </div>
+    <div class="leaderboard-table-wrap">
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Bracket</th>
+            <th>Champion Pick</th>
+            <th>Score</th>
+            <th>Tiebreaker</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+          <!-- Populated by leaderboard.js -->
+        </tbody>
+      </table>
+      <p class="leaderboard-empty" id="leaderboard-empty">Submit your bracket to appear on the leaderboard!</p>
+    </div>
+    <div class="leaderboard-actions">
+      <a href="index.html#bracket" class="btn btn-primary">Fill Out Your Bracket</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>Sandy Rotary Club</h3>
+        <p>Service Above Self</p>
+      </div>
+      <div class="footer-links">
+        <p>1st Annual March -2- Africa Bracket Challenge &bull; 2026</p>
+      </div>
+      <div class="footer-legal">
+        <p>All donations are made to the Sandy Rotary Foundation, a 501(c)(3) nonprofit organization (EIN: 87-0540017). Contributions may be tax-deductible to the extent allowed by law. Consult your tax advisor for details.</p>
+        <p>This event is a charitable fundraiser &mdash; no purchase or donation is necessary to participate. This is not a gambling or wagering event.</p>
+        <p>This event is not affiliated with, sponsored by, or endorsed by the NCAA&reg; or March Madness&reg;. All trademarks are property of their respective owners.</p>
+        <p>Email addresses collected are used solely for bracket tracking and Rotary event communications. We will not share your information with third parties.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/leaderboard.js"></script>
+</body>
+</html>

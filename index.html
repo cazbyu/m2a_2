@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>March -2- Africa Bracket Challenge | Sandy Rotary Club</title>
-  <meta name="description" content="Sandy Rotary Club's 1st Annual March -2- Africa Bracket Challenge. Fill out your NCAA bracket, donate, and support African entrepreneurs!">
+  <meta name="description" content="Sandy Rotary Club's 1st Annual March -2- Africa Bracket Challenge. Fill out your bracket, donate, and support African entrepreneurs!">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,12 +16,29 @@
     <div class="nav-brand"><img src="assets/Sandy Rotary Club_white.png" alt="Sandy Rotary Club" class="nav-logo"></div>
     <div class="nav-links">
       <a href="#bracket">Bracket</a>
-      <a href="#leaderboard">Leaderboard</a>
+      <a href="leaderboard.html">Leaderboard</a>
       <a href="#sharkpond">Rotary Shark Pond</a>
       <a href="#donate" class="nav-donate">Donate</a>
     </div>
     <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
   </nav>
+
+  <!-- Countdown Banner -->
+  <div class="countdown-banner" id="countdown-banner">
+    <div class="countdown-inner">
+      <div class="countdown-label" id="countdown-label">&#9200; Brackets lock in:</div>
+      <div class="countdown-timer" id="countdown-timer">
+        <div class="cd-unit"><span id="cd-days">0</span><small>days</small></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span id="cd-hours">00</span><small>hrs</small></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span id="cd-mins">00</span><small>min</small></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span id="cd-secs">00</span><small>sec</small></div>
+      </div>
+      <div class="countdown-note" id="countdown-note">Thursday, March 19 &middot; 10:05 AM MT &middot; Boosts stay open!</div>
+    </div>
+  </div>
 
   <!-- Hero Section -->
   <section class="hero" id="home">
@@ -40,23 +57,6 @@
       </div>
     </div>
   </section>
-
-  <!-- Countdown Banner -->
-  <div class="countdown-banner" id="countdown-banner">
-    <div class="countdown-inner">
-      <div class="countdown-label" id="countdown-label">&#9200; Brackets lock in:</div>
-      <div class="countdown-timer" id="countdown-timer">
-        <div class="cd-unit"><span id="cd-days">0</span><small>days</small></div>
-        <div class="cd-sep">:</div>
-        <div class="cd-unit"><span id="cd-hours">00</span><small>hrs</small></div>
-        <div class="cd-sep">:</div>
-        <div class="cd-unit"><span id="cd-mins">00</span><small>min</small></div>
-        <div class="cd-sep">:</div>
-        <div class="cd-unit"><span id="cd-secs">00</span><small>sec</small></div>
-      </div>
-      <div class="countdown-note" id="countdown-note">Thursday, March 19 &middot; 10:05 AM MT &middot; Boosts stay open!</div>
-    </div>
-  </div>
 
   <!-- How It Works -->
   <section class="how-it-works" id="how">
@@ -96,7 +96,7 @@
       <button class="region-tab" data-region="midwest">Midwest</button>
       <button class="region-tab" data-region="south">South</button>
       <button class="region-tab" data-region="west">West</button>
-      <button class="region-tab" data-region="finalfour">Final Four</button>
+      <button class="region-tab" data-region="finalfour">Finals</button>
     </div>
 
     <!-- Bracket Container -->
@@ -113,20 +113,22 @@
       </div>
 
       <div class="final-four-container" id="region-finalfour" data-region="finalfour">
-        <h3 class="region-title">Final Four</h3>
+        <h3 class="region-title">Finals</h3>
         <div class="final-four-bracket">
           <div class="ff-semi" id="ff-semi1">
+            <div class="round-label"><span class="round-name">Finals</span><span class="round-dates">Apr 5</span></div>
             <div class="matchup" data-game="ff-semi1">
               <div class="team-slot" data-slot="ff-semi1-top"><span class="seed"></span><span class="name">East Champion</span></div>
               <div class="team-slot" data-slot="ff-semi1-bot"><span class="seed"></span><span class="name">Midwest Champion</span></div>
             </div>
           </div>
           <div class="ff-championship">
-            <div class="matchup championship-matchup" data-game="ff-champ">
-              <div class="team-slot" data-slot="ff-champ-top"><span class="seed"></span><span class="name">Semifinal 1 Winner</span></div>
-              <div class="team-slot" data-slot="ff-champ-bot"><span class="seed"></span><span class="name">Semifinal 2 Winner</span></div>
-            </div>
+            <div class="round-label"><span class="round-name">Championship</span><span class="round-dates">Apr 7</span></div>
             <div class="championship-score">
+              <div class="matchup championship-matchup" data-game="ff-champ">
+                <div class="team-slot" data-slot="ff-champ-top"><span class="seed"></span><span class="name">Semifinal 1 Winner</span></div>
+                <div class="team-slot" data-slot="ff-champ-bot"><span class="seed"></span><span class="name">Semifinal 2 Winner</span></div>
+              </div>
               <label class="score-label">Predict the Final Score (higher score wins)</label>
               <div class="score-inputs">
                 <div class="score-team">
@@ -146,6 +148,7 @@
             </div>
           </div>
           <div class="ff-semi" id="ff-semi2">
+            <div class="round-label"><span class="round-name">Finals</span><span class="round-dates">Apr 5</span></div>
             <div class="matchup" data-game="ff-semi2">
               <div class="team-slot" data-slot="ff-semi2-top"><span class="seed"></span><span class="name">South Champion</span></div>
               <div class="team-slot" data-slot="ff-semi2-bot"><span class="seed"></span><span class="name">West Champion</span></div>
@@ -199,6 +202,10 @@
         <label for="email">Email</label>
         <input type="email" id="email" name="email" required placeholder="your@email.com">
       </div>
+      <div class="form-group">
+        <label for="bracket-name">Bracket Name <span class="label-hint">(optional &mdash; use to submit multiple brackets)</span></label>
+        <input type="text" id="bracket-name" name="bracketName" placeholder="e.g. My Main Bracket, Upset Special, etc.">
+      </div>
       <div class="form-actions">
         <button type="submit" class="btn btn-primary btn-large" id="submit-btn">
           Save My Bracket
@@ -208,38 +215,11 @@
     </form>
   </section>
 
-  <!-- Leaderboard Section -->
-  <section class="leaderboard-section" id="leaderboard">
+  <!-- Leaderboard Teaser -->
+  <section class="leaderboard-teaser" id="leaderboard">
     <h2>Bracket Leaderboard</h2>
-    <div class="scoring-info">
-      <p class="scoring-title">Scoring System</p>
-      <div class="scoring-rounds">
-        <span class="scoring-round">R64: <strong>5 pts</strong></span>
-        <span class="scoring-round">R32: <strong>10 pts</strong></span>
-        <span class="scoring-round">Sweet 16: <strong>20 pts</strong></span>
-        <span class="scoring-round">Elite 8: <strong>40 pts</strong></span>
-        <span class="scoring-round">Final Four: <strong>80 pts</strong></span>
-        <span class="scoring-round">Championship: <strong>160 pts</strong></span>
-      </div>
-      <p class="scoring-max">Maximum possible: <strong>960 points</strong> &bull; Tiebreaker: closest predicted championship total score</p>
-    </div>
-    <div class="leaderboard-table-wrap">
-      <table class="leaderboard-table">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Champion Pick</th>
-            <th>Score</th>
-            <th>Tiebreaker</th>
-          </tr>
-        </thead>
-        <tbody id="leaderboard-body">
-          <!-- Populated by supabase.js -->
-        </tbody>
-      </table>
-      <p class="leaderboard-empty" id="leaderboard-empty">Submit your bracket to appear on the leaderboard!</p>
-    </div>
+    <p>See how you stack up against other bracket challengers!</p>
+    <a href="leaderboard.html" class="btn btn-primary">View Full Leaderboard</a>
   </section>
 
   <!-- Donate Section -->
@@ -278,7 +258,7 @@
       <div class="sharkpond-card">
         <div class="sharkpond-icon">&#127758;</div>
         <h3>The Entrepreneurs</h3>
-        <p><strong>Ten entrepreneurs</strong> from Zambia, Malawi, Lesotho, and Kenya are competing for an opportunity to fund their business with a <strong>0% interest microloan</strong>. Their selection is tied to your bracket performance &mdash; but you can give them a <strong>Boost</strong> to push them forward!</p>
+        <p><strong>Twelve entrepreneurs</strong> from Zambia, Malawi, Lesotho, and Kenya are competing for an opportunity to fund their business with a <strong>0% interest microloan</strong>. Their selection is tied to your bracket performance &mdash; but you can give them a <strong>Boost</strong> to push them forward!</p>
       </div>
       <div class="sharkpond-card">
         <div class="sharkpond-icon">&#127942;</div>
@@ -288,34 +268,20 @@
     </div>
 
     <div class="sharkpond-cta">
-      <p>&#128640; <strong>Give your favorite entrepreneur a Boost!</strong> Your boost is your vote &mdash; the entrepreneur with the most support advances each week.</p>
+      <p>&#128640; <strong>Give your favorite entrepreneur a Boost!</strong> Your boost is your vote &mdash; the entrepreneur with the most support advances.</p>
+    </div>
+
+    <div class="sharkpond-sponsor">
+      <p>If you want to sponsor a <strong>Rotary Shark Pond</strong> service project for your club, school, or organization, contact <strong>Paul Cazier</strong> with the Sandy Rotary Club at <a href="tel:703-981-2213">703-981-2213</a> or email at <a href="mailto:paul.s.cazier@gmail.com">paul.s.cazier@gmail.com</a>.</p>
     </div>
   </section>
 
-  <!-- Entrepreneur Bracket Section -->
+  <!-- Entrepreneur Section -->
   <section class="entrepreneurs-section" id="entrepreneurs">
-    <h2>Entrepreneur Bracket</h2>
-    <p class="section-desc">Select the entrepreneurs you believe are best qualified for funding &mdash; you can boost multiple entrepreneurs across different matchups.</p>
+    <h2>Meet the Entrepreneurs</h2>
+    <p class="section-desc">Each tournament team is randomly assigned to an entrepreneur. When your team wins, that entrepreneur earns points. Give them an extra <strong>Boost</strong> to push them forward!</p>
 
-    <div class="ent-schedule">
-      <div class="ent-week" data-week="1">
-        <div class="ent-week-label">Week 1</div>
-        <div class="ent-week-name">Quarterfinals</div>
-        <div class="ent-week-dates">Mar 19 &ndash; 25</div>
-      </div>
-      <div class="ent-week" data-week="2">
-        <div class="ent-week-label">Week 2</div>
-        <div class="ent-week-name">Semifinals</div>
-        <div class="ent-week-dates">Mar 26 &ndash; Apr 1</div>
-      </div>
-      <div class="ent-week" data-week="3">
-        <div class="ent-week-label">Week 3</div>
-        <div class="ent-week-name">Championship</div>
-        <div class="ent-week-dates">Apr 2 &ndash; 6</div>
-      </div>
-    </div>
-
-    <div class="ent-bracket-container" id="ent-bracket">
+    <div class="ent-cards-container" id="ent-bracket">
       <!-- Populated by entrepreneurs.js -->
     </div>
 
@@ -334,8 +300,8 @@
         </div>
         <div class="prize-card">
           <div class="prize-icon">&#11088;</div>
-          <h4>NCAA Bracket Champion</h4>
-          <p>Recognized as the official Sponsor and invited to a WhatsApp group with the winning entrepreneur.</p>
+          <h4>Bracket Champion</h4>
+          <p>Winner will be invited to join a WhatsApp group with the winning entrepreneur.</p>
         </div>
       </div>
     </div>
@@ -350,6 +316,12 @@
       </div>
       <div class="footer-links">
         <p>1st Annual March -2- Africa Bracket Challenge &bull; 2026</p>
+      </div>
+      <div class="footer-legal">
+        <p>All donations are made to the Sandy Rotary Foundation, a 501(c)(3) nonprofit organization (EIN: 87-0540017). Contributions may be tax-deductible to the extent allowed by law. Consult your tax advisor for details.</p>
+        <p>This event is a charitable fundraiser &mdash; no purchase or donation is necessary to participate. This is not a gambling or wagering event.</p>
+        <p>This event is not affiliated with, sponsored by, or endorsed by the NCAA&reg; or March Madness&reg;. All trademarks are property of their respective owners.</p>
+        <p>Email addresses collected are used solely for bracket tracking and Rotary event communications. We will not share your information with third parties.</p>
       </div>
       <a href="admin.html" class="admin-link" title="Admin">&#9881;</a>
     </div>
@@ -366,6 +338,7 @@
         <a href="#sharkpond" class="btn btn-entrepreneur modal-btn" id="modal-boost-btn">&#128640; Boost an Entrepreneur</a>
         <a href="#donate" class="btn btn-primary modal-btn" id="modal-donate-btn">&#10084; Donate $15</a>
       </div>
+      <a href="leaderboard.html" class="modal-leaderboard-link">View Leaderboard &rarr;</a>
       <button class="modal-skip" id="modal-skip">Maybe later</button>
     </div>
   </div>

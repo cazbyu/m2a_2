@@ -28,7 +28,7 @@
     2: 10,    // Round of 32
     3: 20,    // Sweet 16
     4: 40,    // Elite 8
-    5: 80,    // Final Four
+    5: 80,    // Finals
     6: 160    // Championship
   };
   // ESPN uses: 10/20/40/80/160/320 (same 2x ratio, double values)
@@ -104,6 +104,7 @@
       const firstName = document.getElementById('first-name').value.trim();
       const lastName = document.getElementById('last-name').value.trim();
       const email = document.getElementById('email').value.trim();
+      const bracketName = (document.getElementById('bracket-name')?.value || '').trim();
 
       if (!firstName || !lastName || !email) {
         showMessage('Please fill in all fields.', 'error');
@@ -147,6 +148,7 @@
           first_name: firstName,
           last_name: lastName,
           email,
+          bracket_name: bracketName,
           picks,
           champion,
           champ_score1: scores.score1 || 0,
@@ -159,20 +161,20 @@
           showMessage('Bracket saved successfully!', 'success');
           window.BracketEngine.showToast('Bracket saved!');
         } else {
-          // Check if user already submitted (by email)
+          // Check if user already submitted with this email + bracket name
           const existing = await supabaseRequest(TABLE_BRACKETS, 'GET', null,
-            `?email=eq.${encodeURIComponent(email)}&select=id&limit=1`);
+            `?email=eq.${encodeURIComponent(email)}&bracket_name=eq.${encodeURIComponent(bracketName)}&select=id&limit=1`);
 
           if (existing && existing.length > 0) {
             // Update existing bracket
             await supabaseRequest(TABLE_BRACKETS, 'PATCH', bracketData,
               `?id=eq.${existing[0].id}`);
-            showMessage('Bracket updated successfully!', 'success');
+            showMessage('Bracket updated successfully!' + (bracketName ? ` (${bracketName})` : ''), 'success');
             window.BracketEngine.showToast('Bracket updated!');
           } else {
             // Insert new bracket
             await supabaseRequest(TABLE_BRACKETS, 'POST', bracketData);
-            showMessage('Bracket saved successfully!', 'success');
+            showMessage('Bracket saved successfully!' + (bracketName ? ` (${bracketName})` : ''), 'success');
             window.BracketEngine.showToast('Bracket saved!');
           }
 
@@ -243,54 +245,11 @@
   }
 
   // ===== Leaderboard =====
+  // Full leaderboard is on leaderboard.html (powered by js/leaderboard.js).
+  // This stub is kept for the recalculation flow and post-save redirect hint.
 
-  async function loadLeaderboard() {
-    const tbody = document.getElementById('leaderboard-body');
-    const noData = document.getElementById('leaderboard-empty');
-    if (!tbody) return;
-
-    if (isDemo()) {
-      tbody.innerHTML = '';
-      if (noData) {
-        noData.style.display = 'block';
-        noData.textContent = 'Submit your bracket to appear on the leaderboard!';
-      }
-      return;
-    }
-
-    try {
-      const data = await supabaseRequest(VIEW_LEADERBOARD, 'GET', null,
-        '?select=*&limit=50');
-
-      if (!data || data.length === 0) {
-        tbody.innerHTML = '';
-        if (noData) {
-          noData.style.display = 'block';
-          noData.textContent = 'No brackets submitted yet. Be the first!';
-        }
-        return;
-      }
-
-      if (noData) noData.style.display = 'none';
-
-      tbody.innerHTML = data.map((row, idx) => {
-        const rank = row.rank || (idx + 1);
-        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-        const tiebreaker = (row.champ_score1 || 0) + (row.champ_score2 || 0);
-        return `
-          <tr class="${rank <= 3 ? 'leaderboard-top' : ''}">
-            <td class="lb-rank">${medal}</td>
-            <td class="lb-name">${row.first_name} ${row.last_name.charAt(0)}.</td>
-            <td class="lb-champion">${row.champion || '—'}</td>
-            <td class="lb-score">${row.total_score || 0}</td>
-            <td class="lb-tiebreaker">${tiebreaker || '—'}</td>
-          </tr>
-        `;
-      }).join('');
-    } catch (err) {
-      console.error('Leaderboard error:', err);
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">Unable to load leaderboard</td></tr>';
-    }
+  function loadLeaderboard() {
+    // No-op on main page — leaderboard is on its own page now
   }
 
   // ===== Score Recalculation =====
@@ -400,6 +359,10 @@
       loadBtn.textContent = 'Loading...';
       statusEl.textContent = '';
 
+      // Remove any previous bracket picker
+      const oldPicker = document.getElementById('bracket-picker');
+      if (oldPicker) oldPicker.remove();
+
       try {
         if (isDemo()) {
           statusEl.textContent = 'No saved bracket found for this email.';
@@ -408,7 +371,7 @@
         }
 
         const data = await supabaseRequest(TABLE_BRACKETS, 'GET', null,
-          `?email=eq.${encodeURIComponent(email)}&select=*&limit=1`);
+          `?email=eq.${encodeURIComponent(email)}&select=*&order=created_at.asc`);
 
         if (!data || data.length === 0) {
           statusEl.textContent = 'No bracket found for this email.';
@@ -416,31 +379,13 @@
           return;
         }
 
-        const bracket = data[0];
-
-        // Load picks into bracket UI
-        if (bracket.picks && window.BracketEngine && window.BracketEngine.loadPicks) {
-          window.BracketEngine.loadPicks(bracket.picks);
+        if (data.length === 1) {
+          // Only one bracket — load it directly
+          loadBracketData(data[0]);
+        } else {
+          // Multiple brackets — show picker
+          showBracketPicker(data, formDiv);
         }
-
-        // Load championship scores
-        if (window.BracketEngine && window.BracketEngine.loadChampionshipScores) {
-          window.BracketEngine.loadChampionshipScores(
-            bracket.champ_score1 || 0,
-            bracket.champ_score2 || 0
-          );
-        }
-
-        // Fill in the form fields
-        document.getElementById('first-name').value = bracket.first_name || '';
-        document.getElementById('last-name').value = bracket.last_name || '';
-        document.getElementById('email').value = bracket.email || '';
-
-        // Scroll to bracket
-        statusEl.textContent = 'Bracket loaded! Edit your picks above, then save.';
-        statusEl.className = 'load-status success';
-
-        window.BracketEngine.showToast('Bracket loaded!');
 
       } catch (err) {
         console.error('Load bracket error:', err);
@@ -451,6 +396,60 @@
         loadBtn.textContent = 'Load My Bracket';
       }
     });
+
+    function loadBracketData(bracket) {
+      // Load picks into bracket UI
+      if (bracket.picks && window.BracketEngine && window.BracketEngine.loadPicks) {
+        window.BracketEngine.loadPicks(bracket.picks);
+      }
+
+      // Load championship scores
+      if (window.BracketEngine && window.BracketEngine.loadChampionshipScores) {
+        window.BracketEngine.loadChampionshipScores(
+          bracket.champ_score1 || 0,
+          bracket.champ_score2 || 0
+        );
+      }
+
+      // Fill in the form fields
+      document.getElementById('first-name').value = bracket.first_name || '';
+      document.getElementById('last-name').value = bracket.last_name || '';
+      document.getElementById('email').value = bracket.email || '';
+      const bracketNameInput = document.getElementById('bracket-name');
+      if (bracketNameInput) bracketNameInput.value = bracket.bracket_name || '';
+
+      const statusEl = document.getElementById('load-status');
+      const label = bracket.bracket_name ? ` "${bracket.bracket_name}"` : '';
+      statusEl.textContent = `Bracket${label} loaded! Edit your picks above, then save.`;
+      statusEl.className = 'load-status success';
+
+      window.BracketEngine.showToast('Bracket loaded!');
+    }
+
+    function showBracketPicker(brackets, container) {
+      const statusEl = document.getElementById('load-status');
+      statusEl.textContent = `Found ${brackets.length} brackets. Choose one to load:`;
+      statusEl.className = 'load-status success';
+
+      const picker = document.createElement('div');
+      picker.id = 'bracket-picker';
+      picker.className = 'bracket-picker';
+
+      brackets.forEach((b, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-secondary btn-small bracket-pick-btn';
+        const name = b.bracket_name || 'Bracket ' + (i + 1);
+        const champ = b.champion ? ` — Champ: ${b.champion}` : '';
+        btn.textContent = `${name}${champ}`;
+        btn.addEventListener('click', () => {
+          loadBracketData(b);
+          picker.remove();
+        });
+        picker.appendChild(btn);
+      });
+
+      container.appendChild(picker);
+    }
   }
 
   // ===== Process Return from Stripe =====

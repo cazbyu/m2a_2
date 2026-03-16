@@ -1,11 +1,11 @@
 // ===== Bracket Engine =====
-// Renders the interactive NCAA tournament bracket and handles click-to-advance logic.
+// Renders the interactive tournament bracket and handles click-to-advance logic.
 
 (function () {
   'use strict';
 
   // Game ID scheme: "{region}-r{round}-g{game}" e.g. "east-r1-g1"
-  // Final Four: "ff-semi1", "ff-semi2", "ff-champ"
+  // Finals: "ff-semi1", "ff-semi2", "ff-champ"
 
   const state = {
     picks: {},   // gameId -> { team, seed }
@@ -42,6 +42,18 @@
     document.getElementById('bracket-container').addEventListener('click', handleTeamClick);
   }
 
+  // Round date labels for 2026 NCAA Tournament
+  const ROUND_LABELS = {
+    1: { name: '1st Round',     dates: 'Mar 20–21' },
+    2: { name: '2nd Round',     dates: 'Mar 22–23' },
+    3: { name: 'Sweet 16',     dates: 'Mar 27–28' },
+    4: { name: 'Elite 8',      dates: 'Mar 29–30' }
+  };
+  const FF_LABELS = {
+    semi: { name: 'Finals',        dates: 'Apr 5' },
+    champ: { name: 'Championship', dates: 'Apr 7' }
+  };
+
   function renderRegion(container, region, regionKey, side) {
     // Teams come in pairs: [0,1], [2,3], [4,5], ... (8 matchups)
     const teams = region.teams;
@@ -51,6 +63,15 @@
       const roundDiv = document.createElement('div');
       roundDiv.className = `round round-${r + 1}`;
       roundDiv.dataset.round = r + 1;
+
+      // Add round date label at top
+      const label = ROUND_LABELS[r + 1];
+      if (label) {
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'round-label';
+        labelDiv.innerHTML = `<span class="round-name">${label.name}</span><span class="round-dates">${label.dates}</span>`;
+        roundDiv.appendChild(labelDiv);
+      }
 
       if (r === 0) {
         // Round 1: 8 matchups from seed data

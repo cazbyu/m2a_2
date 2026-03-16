@@ -30,6 +30,15 @@ ALTER TABLE public."0013_m2a_bracket"
 ALTER TABLE public."0013_m2a_bracket"
   ADD COLUMN IF NOT EXISTS total_score integer DEFAULT 0;
 
+-- Bracket name column (allows multiple brackets per email)
+ALTER TABLE public."0013_m2a_bracket"
+  ADD COLUMN IF NOT EXISTS bracket_name text DEFAULT ''::text;
+
+-- Unique constraint: one bracket per email + bracket_name combination
+-- (allows updates on resubmit while permitting multiple named brackets)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_bracket_email_name
+  ON public."0013_m2a_bracket" (email, bracket_name);
+
 -- Index for leaderboard queries (score DESC, then by submission time)
 CREATE INDEX IF NOT EXISTS idx_bracket_score
   ON public."0013_m2a_bracket" (total_score DESC, created_at ASC);
@@ -113,13 +122,14 @@ WHERE NOT EXISTS (SELECT 1 FROM public."0013_m2a_entrepreneurs" e WHERE e.name =
 
 -- 6. Leaderboard View
 -- Ranks users by total_score, then by closest predicted championship
--- total to 140 (average NCAA championship combined score), then by
+-- total to 140 (average championship combined score), then by
 -- earliest submission.
 CREATE OR REPLACE VIEW public."0013_m2a_leaderboard" AS
 SELECT
   id,
   first_name,
   last_name,
+  bracket_name,
   champion,
   total_score,
   champ_score1,
@@ -218,7 +228,7 @@ CREATE POLICY "Allow public insert on entrepreneur votes"
 -- Round 2 (R32):    10 points per correct pick  (16 games = 160 max)
 -- Round 3 (S16):    20 points per correct pick  ( 8 games = 160 max)
 -- Round 4 (E8):     40 points per correct pick  ( 4 games = 160 max)
--- Final Four:       80 points per correct pick  ( 2 games = 160 max)
+-- Finals:          80 points per correct pick  ( 2 games = 160 max)
 -- Championship:    160 points per correct pick  ( 1 game  = 160 max)
 -- ─────────────────────────────────────────────────────────────
 -- Maximum possible score: 960 points
@@ -233,6 +243,6 @@ CREATE POLICY "Allow public insert on entrepreneur votes"
 -- ============================================================
 -- Regional games: {region}-r{round}-g{game}
 --   e.g. east-r1-g1, midwest-r3-g2
--- Final Four:     ff-semi1, ff-semi2
+-- Finals:         ff-semi1, ff-semi2
 -- Championship:   ff-champ
 -- ============================================================
