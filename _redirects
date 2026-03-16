@@ -1,0 +1,12 @@
+# Serve the March 2 Africa landing page at /march2africa
+/march2africa          /index.html        200
+/march2africa/         /index.html        200
+/march2africa/leaderboard  /leaderboard.html  200
+
+# Allow direct access to leaderboard and admin pages
+/leaderboard.html      /leaderboard.html  200
+/admin.html            /admin.html        200
+
+# Redirect root and everything else to the main Rotary site
+/               https://sandyrotary.org   301!
+/*              https://sandyrotary.org   301
