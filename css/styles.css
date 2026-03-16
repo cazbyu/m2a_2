@@ -1786,10 +1786,18 @@ body {
   padding: 8px 0 0;
   border-top: 1px solid #e8e0d4;
 }
+.cart-donor-name-row {
+  display: flex;
+  gap: 8px;
+}
+.cart-donor-name-field {
+  flex: 1;
+}
 .ent-cart-donor-info .ent-cart-rotary-label {
   margin-top: 6px;
 }
-.ent-cart-donor-info .ent-cart-rotary-label:first-child {
+.ent-cart-donor-info .ent-cart-rotary-label:first-child,
+.cart-donor-name-field .ent-cart-rotary-label {
   margin-top: 0;
 }
 /* Note below checkout button */

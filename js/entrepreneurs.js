@@ -366,8 +366,16 @@
         donationRow +
         boostSection +
         '<div class="ent-cart-donor-info">' +
-          '<label for="cart-donor-name" class="ent-cart-rotary-label">Your Name</label>' +
-          '<input type="text" id="cart-donor-name" class="ent-cart-rotary-input" placeholder="First Last">' +
+          '<div class="cart-donor-name-row">' +
+            '<div class="cart-donor-name-field">' +
+              '<label for="cart-donor-first" class="ent-cart-rotary-label">First Name</label>' +
+              '<input type="text" id="cart-donor-first" class="ent-cart-rotary-input" placeholder="First">' +
+            '</div>' +
+            '<div class="cart-donor-name-field">' +
+              '<label for="cart-donor-last" class="ent-cart-rotary-label">Last Name</label>' +
+              '<input type="text" id="cart-donor-last" class="ent-cart-rotary-input" placeholder="Last">' +
+            '</div>' +
+          '</div>' +
           '<label for="cart-donor-email" class="ent-cart-rotary-label">Your Email</label>' +
           '<input type="email" id="cart-donor-email" class="ent-cart-rotary-input" placeholder="your@email.com">' +
         '</div>' +
@@ -414,13 +422,16 @@
     }
 
     // Pre-fill donor name/email from bracket form if available
-    var donorNameInput = cartEl.querySelector('#cart-donor-name');
+    var donorFirstInput = cartEl.querySelector('#cart-donor-first');
+    var donorLastInput = cartEl.querySelector('#cart-donor-last');
     var donorEmailInput = cartEl.querySelector('#cart-donor-email');
-    if (donorNameInput) {
+    if (donorFirstInput) {
       var fnEl = document.getElementById('first-name');
+      if (fnEl && fnEl.value.trim()) donorFirstInput.value = fnEl.value.trim();
+    }
+    if (donorLastInput) {
       var lnEl = document.getElementById('last-name');
-      var existingName = ((fnEl ? fnEl.value.trim() : '') + ' ' + (lnEl ? lnEl.value.trim() : '')).trim();
-      if (existingName) donorNameInput.value = existingName;
+      if (lnEl && lnEl.value.trim()) donorLastInput.value = lnEl.value.trim();
     }
     if (donorEmailInput) {
       var emailEl = document.getElementById('email');
@@ -628,17 +639,12 @@
             var emailEl = document.getElementById('email');
             var fnEl = document.getElementById('first-name');
             var lnEl = document.getElementById('last-name');
-            var cartDonorName = document.getElementById('cart-donor-name');
+            var cartDonorFirst = document.getElementById('cart-donor-first');
+            var cartDonorLast = document.getElementById('cart-donor-last');
             var cartDonorEmail = document.getElementById('cart-donor-email');
             var contributorEmail = (emailEl && emailEl.value.trim()) || (cartDonorEmail && cartDonorEmail.value.trim()) || '';
-            var contributorFirst = (fnEl && fnEl.value.trim()) || '';
-            var contributorLast = (lnEl && lnEl.value.trim()) || '';
-            // If bracket form name is empty, parse from cart donor name field
-            if (!contributorFirst && cartDonorName && cartDonorName.value.trim()) {
-              var nameParts = cartDonorName.value.trim().split(/\s+/);
-              contributorFirst = nameParts[0] || '';
-              contributorLast = nameParts.slice(1).join(' ') || '';
-            }
+            var contributorFirst = (fnEl && fnEl.value.trim()) || (cartDonorFirst && cartDonorFirst.value.trim()) || '';
+            var contributorLast = (lnEl && lnEl.value.trim()) || (cartDonorLast && cartDonorLast.value.trim()) || '';
 
             localStorage.setItem('m2a_ent_cart', JSON.stringify(cart));
             localStorage.setItem('m2a_pending_donation', JSON.stringify({
