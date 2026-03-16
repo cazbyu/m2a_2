@@ -23,7 +23,7 @@
   // Current saved results (fetched from Supabase)
   let savedResults = {};
 
-  // ===== REST Client =====
+  // ===== REST Client (reads — uses anon key, public RLS) =====
 
   function api(table, method, body, query) {
     const url = `${SUPABASE_URL}/rest/v1/${table}${query || ''}`;
@@ -39,6 +39,23 @@
       method,
       headers,
       body: body ? JSON.stringify(body) : undefined
+    }).then(res => {
+      if (!res.ok) return res.text().then(t => { throw new Error(t); });
+      const ct = res.headers.get('content-type');
+      return (ct && ct.includes('application/json')) ? res.json() : null;
+    });
+  }
+
+  // ===== Admin Write Client (proxied through Netlify with service_role key) =====
+
+  function adminApi(table, method, body, query) {
+    const token = sessionStorage.getItem('m2a_admin_token') || '';
+    const expiry = sessionStorage.getItem('m2a_admin_expiry') || '';
+
+    return fetch('/.netlify/functions/admin-api', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, expiry, table, method, body, query })
     }).then(res => {
       if (!res.ok) return res.text().then(t => { throw new Error(t); });
       const ct = res.headers.get('content-type');
@@ -106,6 +123,8 @@
 
   function logout() {
     sessionStorage.removeItem('m2a_admin');
+    sessionStorage.removeItem('m2a_admin_token');
+    sessionStorage.removeItem('m2a_admin_expiry');
     document.getElementById('dashboard').classList.remove('active');
     document.getElementById('login-screen').style.display = 'block';
     document.getElementById('login-password').value = '';
@@ -344,11 +363,11 @@
     try {
       const existing = savedResults[gameId];
       if (existing) {
-        // Update
-        await api(TABLE_RESULTS, 'PATCH', resultData, `?game_id=eq.${encodeURIComponent(gameId)}`);
+        // Update via admin proxy (RLS blocks anon writes on results)
+        await adminApi(TABLE_RESULTS, 'PATCH', resultData, `?game_id=eq.${encodeURIComponent(gameId)}`);
       } else {
-        // Insert
-        await api(TABLE_RESULTS, 'POST', resultData);
+        // Insert via admin proxy
+        await adminApi(TABLE_RESULTS, 'POST', resultData);
       }
 
       savedResults[gameId] = {
@@ -461,7 +480,7 @@
           }
         }
 
-        await api(TABLE_BRACKETS, 'PATCH', { total_score: totalScore }, `?id=eq.${bracket.id}`);
+        await adminApi(TABLE_BRACKETS, 'PATCH', { total_score: totalScore }, `?id=eq.${bracket.id}`);
         updated++;
       }
 
