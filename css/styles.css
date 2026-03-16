@@ -430,6 +430,49 @@ body {
 .form-message.success { color: var(--color-secondary); }
 .form-message.error { color: var(--color-accent); }
 
+/* ===== Load Bracket ===== */
+.load-bracket {
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.15);
+  border-radius: 8px;
+  text-align: center;
+}
+.load-bracket-text { font-size: 0.95rem; color: #aaa; margin: 0; }
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.btn-link:hover { color: #fff; }
+.load-bracket-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.load-bracket-form .form-group { margin: 0; }
+.load-bracket-form input {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  font-size: 0.9rem;
+  width: 280px;
+}
+.btn-small { padding: 8px 20px; font-size: 0.85rem; }
+.load-status { font-size: 0.85rem; font-weight: 600; }
+.load-status.success { color: var(--color-secondary); }
+.load-status.error { color: var(--color-accent); }
+
 /* ===== Donate Section ===== */
 .donate-section {
   padding: 60px 24px;
@@ -1032,6 +1075,18 @@ body {
 }
 .footer h3 { color: #fff; font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 4px; }
 .footer-links { margin-top: 12px; font-size: 0.85rem; }
+.admin-link {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  color: #444;
+  text-decoration: none;
+  font-size: 1.1rem;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+.admin-link:hover { opacity: 1; color: #999; }
+.footer .footer-content { position: relative; }
 
 /* ===== Toast ===== */
 .toast {

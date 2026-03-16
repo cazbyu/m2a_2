@@ -155,6 +155,19 @@
   <section class="submit-section" id="submit">
     <h2>Save Your Bracket</h2>
     <p>Enter your info to lock in your picks. We'll track your score as the tournament progresses!</p>
+
+    <!-- Load existing bracket -->
+    <div class="load-bracket" id="load-bracket">
+      <p class="load-bracket-text">Already submitted? <button class="btn-link" id="load-bracket-toggle">Load &amp; edit your bracket</button></p>
+      <div class="load-bracket-form" id="load-bracket-form" style="display:none;">
+        <div class="form-group">
+          <input type="email" id="load-email" placeholder="Enter the email you used to submit" style="max-width:350px;">
+        </div>
+        <button class="btn btn-secondary btn-small" id="load-bracket-btn">Load My Bracket</button>
+        <span class="load-status" id="load-status"></span>
+      </div>
+    </div>
+
     <form id="bracket-form" class="bracket-form">
       <div class="form-row">
         <div class="form-group">
@@ -291,6 +304,7 @@
       <div class="footer-links">
         <p>1st Annual March -2- Africa Bracket Challenge &bull; 2026</p>
       </div>
+      <a href="admin.html" class="admin-link" title="Admin">&#9881;</a>
     </div>
   </footer>
 

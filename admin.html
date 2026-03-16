@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | March -2- Africa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a1628;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    .admin-header {
+      background: linear-gradient(135deg, #0d1f3c 0%, #1a3a5c 100%);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #f4a020;
+    }
+    .admin-header h1 {
+      font-family: 'Bebas Neue', cursive;
+      font-size: 1.5rem;
+      color: #f4a020;
+      letter-spacing: 2px;
+    }
+    .admin-header a {
+      color: #90caf9;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .admin-header a:hover { text-decoration: underline; }
+    .admin-logout { cursor: pointer; background: none; border: 1px solid #f4a020; color: #f4a020; padding: 0.3rem 1rem; border-radius: 4px; font-size: 0.85rem; }
+    .admin-logout:hover { background: #f4a020; color: #0a1628; }
+
+    /* Login */
+    .login-container {
+      max-width: 400px;
+      margin: 15vh auto;
+      padding: 2rem;
+      background: #0d1f3c;
+      border-radius: 12px;
+      border: 1px solid #1a3a5c;
+    }
+    .login-container h2 {
+      font-family: 'Bebas Neue', cursive;
+      color: #f4a020;
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .login-container input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #1a3a5c;
+      border-radius: 6px;
+      background: #0a1628;
+      color: #e0e0e0;
+      font-size: 1rem;
+    }
+    .login-container input:focus { outline: none; border-color: #f4a020; }
+    .login-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: #f4a020;
+      color: #0a1628;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .login-btn:hover { background: #e8941c; }
+    .login-error {
+      color: #ef5350;
+      text-align: center;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    /* Dashboard */
+    .dashboard { display: none; }
+    .dashboard.active { display: block; }
+    .dash-content { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
+
+    /* Tabs */
+    .dash-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #1a3a5c;
+    }
+    .dash-tab {
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      border: none;
+      color: #90caf9;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      font-weight: 500;
+    }
+    .dash-tab.active { color: #f4a020; border-bottom-color: #f4a020; }
+    .dash-tab:hover { color: #f4a020; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .filters select {
+      padding: 0.5rem 1rem;
+      background: #0d1f3c;
+      color: #e0e0e0;
+      border: 1px solid #1a3a5c;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .filters select:focus { border-color: #f4a020; outline: none; }
+
+    /* Games list */
+    .games-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .game-card {
+      background: #0d1f3c;
+      border: 1px solid #1a3a5c;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .game-card.has-result { border-color: #2e7d32; }
+    .game-id {
+      font-size: 0.75rem;
+      color: #666;
+      font-family: monospace;
+      min-width: 110px;
+    }
+    .game-matchup {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 250px;
+    }
+    .team-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid #1a3a5c;
+      border-radius: 6px;
+      background: #0a1628;
+      color: #e0e0e0;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      min-width: 100px;
+      text-align: center;
+    }
+    .team-btn:hover { border-color: #f4a020; color: #f4a020; }
+    .team-btn.winner {
+      background: #1b5e20;
+      border-color: #4caf50;
+      color: #fff;
+      font-weight: 600;
+    }
+    .team-btn .seed { color: #f4a020; font-weight: 600; margin-right: 4px; }
+    .vs-label { color: #666; font-size: 0.8rem; }
+    .game-scores {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .game-scores input {
+      width: 50px;
+      padding: 0.4rem;
+      text-align: center;
+      background: #0a1628;
+      color: #e0e0e0;
+      border: 1px solid #1a3a5c;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    .game-scores input:focus { border-color: #f4a020; outline: none; }
+    .game-scores span { color: #666; }
+    .game-save {
+      padding: 0.4rem 0.75rem;
+      background: #1565c0;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .game-save:hover { background: #1976d2; }
+    .game-save.saved { background: #2e7d32; }
+    .game-status {
+      font-size: 0.75rem;
+      color: #4caf50;
+    }
+
+    /* Action buttons */
+    .action-bar {
+      display: flex;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .action-btn.primary { background: #f4a020; color: #0a1628; }
+    .action-btn.primary:hover { background: #e8941c; }
+    .action-btn.secondary { background: #1565c0; color: #fff; }
+    .action-btn.secondary:hover { background: #1976d2; }
+    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Status message */
+    .status-msg {
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .status-msg.success { display: block; background: #1b5e2033; border: 1px solid #2e7d32; color: #66bb6a; }
+    .status-msg.error { display: block; background: #b7161633; border: 1px solid #c62828; color: #ef5350; }
+
+    /* Leaderboard */
+    .lb-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    .lb-table th {
+      background: #1a3a5c;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      font-size: 0.85rem;
+      color: #f4a020;
+    }
+    .lb-table td {
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid #1a3a5c;
+      font-size: 0.85rem;
+    }
+    .lb-table tr:hover { background: #0d1f3c44; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .game-card { flex-direction: column; align-items: stretch; }
+      .game-matchup { flex-direction: column; }
+      .filters { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <div class="login-container">
+      <h2>&#9881; Admin Login</h2>
+      <input type="email" id="login-email" placeholder="Email" autocomplete="email">
+      <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+      <button class="login-btn" id="login-btn">Sign In</button>
+      <div class="login-error" id="login-error">Invalid email or password.</div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard" id="dashboard">
+    <header class="admin-header">
+      <h1>&#9881; M2A Admin</h1>
+      <div>
+        <a href="index.html">&#8592; Back to Site</a>
+        &nbsp;&nbsp;
+        <button class="admin-logout" id="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <div class="dash-content">
+      <div class="dash-tabs">
+        <button class="dash-tab active" data-tab="results">Enter Results</button>
+        <button class="dash-tab" data-tab="leaderboard">Leaderboard</button>
+        <button class="dash-tab" data-tab="brackets">All Brackets</button>
+      </div>
+
+      <!-- Tab: Enter Results -->
+      <div class="tab-panel active" id="tab-results">
+        <div class="filters">
+          <select id="filter-region">
+            <option value="east">East</option>
+            <option value="midwest">Midwest</option>
+            <option value="south">South</option>
+            <option value="west">West</option>
+            <option value="ff">Final Four</option>
+          </select>
+          <select id="filter-round">
+            <option value="1">Round 1 (R64) &mdash; 5 pts</option>
+            <option value="2">Round 2 (R32) &mdash; 10 pts</option>
+            <option value="3">Sweet 16 &mdash; 20 pts</option>
+            <option value="4">Elite 8 &mdash; 40 pts</option>
+          </select>
+        </div>
+
+        <div class="games-list" id="games-list">
+          <!-- Populated by admin.js -->
+        </div>
+
+        <div id="results-status" class="status-msg"></div>
+
+        <div class="action-bar">
+          <button class="action-btn primary" id="recalc-btn">&#9889; Recalculate All Scores</button>
+          <button class="action-btn secondary" id="save-all-btn">&#128190; Save All Visible Results</button>
+        </div>
+      </div>
+
+      <!-- Tab: Leaderboard -->
+      <div class="tab-panel" id="tab-leaderboard">
+        <button class="action-btn secondary" id="refresh-lb-btn" style="margin-bottom:1rem;">&#128260; Refresh</button>
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Champion</th>
+              <th>Score</th>
+              <th>Tiebreaker</th>
+            </tr>
+          </thead>
+          <tbody id="lb-body"></tbody>
+        </table>
+        <p id="lb-empty" style="color:#666; text-align:center; margin-top:2rem;">Loading...</p>
+      </div>
+
+      <!-- Tab: All Brackets -->
+      <div class="tab-panel" id="tab-brackets">
+        <button class="action-btn secondary" id="refresh-brackets-btn" style="margin-bottom:1rem;">&#128260; Refresh</button>
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Champion</th>
+              <th>Score</th>
+              <th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody id="brackets-body"></tbody>
+        </table>
+        <p id="brackets-empty" style="color:#666; text-align:center; margin-top:2rem;">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/teams.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

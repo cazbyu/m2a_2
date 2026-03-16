@@ -491,6 +491,64 @@
 
   // ===== Public API =====
 
+  // Load picks from an external source (e.g., Supabase)
+  function loadPicks(picks) {
+    if (!picks || typeof picks !== 'object') return;
+
+    // Clear existing picks
+    state.picks = {};
+    state.pickCount = 0;
+
+    // Clear all selected states and advanced teams in the UI
+    document.querySelectorAll('.team-slot.selected').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.team-slot[data-team]').forEach(el => {
+      // Only reset slots that were auto-filled (not original R1 slots)
+      const slot = el.dataset.slot || '';
+      if (!slot.match(/-r1-g\d+-(top|bot)$/)) {
+        el.querySelector('.name').textContent = el.dataset.placeholder || '';
+        el.querySelector('.seed').textContent = '';
+        delete el.dataset.team;
+        delete el.dataset.seed;
+      }
+    });
+
+    // Sort by round order and replay picks (same as loadFromLocalStorage)
+    const sortedKeys = Object.keys(picks).sort((a, b) => {
+      return getRoundOrder(a) - getRoundOrder(b);
+    });
+
+    sortedKeys.forEach(gameId => {
+      const pick = picks[gameId];
+      if (!pick || !pick.team) return;
+
+      state.picks[gameId] = pick;
+
+      // Mark the selected team in the matchup
+      const matchup = document.querySelector(`[data-game="${gameId}"]`);
+      if (matchup) {
+        matchup.querySelectorAll('.team-slot').forEach(slot => {
+          if (slot.dataset.team === pick.team) {
+            slot.classList.add('selected');
+          }
+        });
+      }
+
+      // Advance to next round
+      advanceTeam(gameId, pick.team, pick.seed);
+    });
+
+    updatePickCount();
+    saveToLocalStorage();
+  }
+
+  // Load championship score predictions
+  function loadChampionshipScores(score1, score2) {
+    const s1 = document.getElementById('champ-score1');
+    const s2 = document.getElementById('champ-score2');
+    if (s1) s1.value = score1 || '';
+    if (s2) s2.value = score2 || '';
+  }
+
   window.BracketEngine = {
     getPicks: () => ({ ...state.picks }),
     getPickCount: () => state.pickCount,
@@ -504,6 +562,8 @@
         score2: s2 ? parseInt(s2.value) || 0 : 0
       };
     },
+    loadPicks,
+    loadChampionshipScores,
     showToast
   };
 

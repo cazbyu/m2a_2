@@ -135,10 +135,18 @@ DROP POLICY IF EXISTS "Allow public update on brackets" ON public."0013_m2a_brac
 CREATE POLICY "Allow public update on brackets"
   ON public."0013_m2a_bracket" FOR UPDATE USING (true) WITH CHECK (true);
 
--- Policies: public read on results (admin inserts via dashboard)
+-- Policies: public read + insert + update on results (admin enters via dashboard)
 DROP POLICY IF EXISTS "Allow public read on results" ON public."0013_m2a_results";
 CREATE POLICY "Allow public read on results"
   ON public."0013_m2a_results" FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public insert on results" ON public."0013_m2a_results";
+CREATE POLICY "Allow public insert on results"
+  ON public."0013_m2a_results" FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public update on results" ON public."0013_m2a_results";
+CREATE POLICY "Allow public update on results"
+  ON public."0013_m2a_results" FOR UPDATE USING (true) WITH CHECK (true);
 
 -- Policies: public read + insert on entrepreneur votes
 DROP POLICY IF EXISTS "Allow public read on entrepreneur votes" ON public."0013_m2a_entrepreneur_votes";

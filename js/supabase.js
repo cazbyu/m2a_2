@@ -313,6 +313,85 @@
     });
   }
 
+  // ===== Load Existing Bracket =====
+
+  function setupLoadBracket() {
+    const toggleBtn = document.getElementById('load-bracket-toggle');
+    const formDiv = document.getElementById('load-bracket-form');
+    const loadBtn = document.getElementById('load-bracket-btn');
+    const statusEl = document.getElementById('load-status');
+
+    if (!toggleBtn || !formDiv || !loadBtn) return;
+
+    toggleBtn.addEventListener('click', () => {
+      formDiv.style.display = formDiv.style.display === 'none' ? 'flex' : 'none';
+    });
+
+    loadBtn.addEventListener('click', async () => {
+      const email = document.getElementById('load-email').value.trim();
+      if (!email) {
+        statusEl.textContent = 'Please enter your email.';
+        statusEl.className = 'load-status error';
+        return;
+      }
+
+      loadBtn.disabled = true;
+      loadBtn.textContent = 'Loading...';
+      statusEl.textContent = '';
+
+      try {
+        if (isDemo()) {
+          statusEl.textContent = 'No saved bracket found for this email.';
+          statusEl.className = 'load-status error';
+          return;
+        }
+
+        const data = await supabaseRequest(TABLE_BRACKETS, 'GET', null,
+          `?email=eq.${encodeURIComponent(email)}&select=*&limit=1`);
+
+        if (!data || data.length === 0) {
+          statusEl.textContent = 'No bracket found for this email.';
+          statusEl.className = 'load-status error';
+          return;
+        }
+
+        const bracket = data[0];
+
+        // Load picks into bracket UI
+        if (bracket.picks && window.BracketEngine && window.BracketEngine.loadPicks) {
+          window.BracketEngine.loadPicks(bracket.picks);
+        }
+
+        // Load championship scores
+        if (window.BracketEngine && window.BracketEngine.loadChampionshipScores) {
+          window.BracketEngine.loadChampionshipScores(
+            bracket.champ_score1 || 0,
+            bracket.champ_score2 || 0
+          );
+        }
+
+        // Fill in the form fields
+        document.getElementById('first-name').value = bracket.first_name || '';
+        document.getElementById('last-name').value = bracket.last_name || '';
+        document.getElementById('email').value = bracket.email || '';
+
+        // Scroll to bracket
+        statusEl.textContent = 'Bracket loaded! Edit your picks above, then save.';
+        statusEl.className = 'load-status success';
+
+        window.BracketEngine.showToast('Bracket loaded!');
+
+      } catch (err) {
+        console.error('Load bracket error:', err);
+        statusEl.textContent = 'Error loading bracket. Please try again.';
+        statusEl.className = 'load-status error';
+      } finally {
+        loadBtn.disabled = false;
+        loadBtn.textContent = 'Load My Bracket';
+      }
+    });
+  }
+
   // ===== Public API =====
 
   window.SupabaseClient = {
@@ -333,10 +412,14 @@
   };
 
   // ===== Initialize =====
-  // Load leaderboard on page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadLeaderboard);
-  } else {
+  function init() {
     loadLeaderboard();
+    setupLoadBracket();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
